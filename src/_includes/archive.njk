@@ -3,7 +3,15 @@ layout: base.njk
 ---
 {% set category = section | sectionById %}
 {% set records = collections[section] %}
-<div class="container archive-page" data-archive>
+<div class="archive-page" data-archive>
+  <nav class="folder-rail" aria-label="기록 폴더">
+    {% for item in site.sections %}
+    <a href="/{{ item.id }}/" class="folder-shortcut"{% if item.id == section %} aria-current="page"{% endif %}>
+      <span aria-hidden="true" class="folder-symbol"></span>{{ item.label | escape }}
+    </a>
+    {% endfor %}
+  </nav>
+  <div class="archive-files">
   <header class="archive-heading">
     <h1>{{ category.label | escape }}</h1>
     <p>{{ category.description | escape }}</p>
@@ -26,25 +34,25 @@ layout: base.njk
     {% endif %}
   </form>
   {% endif %}
-  <p class="record-total" role="status" aria-live="polite" aria-atomic="true" data-total>전체 {{ records.length }}편</p>
+  <div class="archive-count"><p class="record-total" role="status" aria-live="polite" aria-atomic="true" data-total>전체 {{ records.length }}편</p></div>
   <ol class="record-list">
     {% for record in records %}
     <li class="record" data-record data-topic="{{ record.data.topic | default('') | escape }}">
       <a class="record-link{% if record.data.image %} illustrated{% endif %}" href="{{ record.url }}">
-        <div class="record-date">
-          <time datetime="{{ record.date | isoDay }}">{{ record.date | displayDay }}</time>
-          {% if record.data.dateLabel %}<span>{{ record.data.dateLabel | escape }}</span>{% endif %}
-        </div>
-        <div class="record-main">
-          {% if record.data.topic %}<span class="record-topic">{{ record.data.topic | escape }}</span>{% endif %}
-          <h2>{{ record.data.title | escape }}</h2>
-          <p>{{ record.data.description | escape }}</p>
-        </div>
         {% if record.data.image %}
         <div class="record-image">
           <img src="{{ record.data.image | escape }}" alt="" width="{{ record.data.imageWidth | default(320) }}" height="{{ record.data.imageHeight | default(180) }}" loading="lazy" decoding="async">
         </div>
-        {% endif %}
+        {% else %}<span class="file-symbol" aria-hidden="true"></span>{% endif %}
+        <div class="record-main">
+          <h2>{{ record.data.title | escape }}</h2>
+          <p>{{ record.data.description | escape }}</p>
+          {% if record.data.topic %}<span class="record-topic">{{ record.data.topic | escape }}</span>{% endif %}
+        </div>
+        <div class="record-date">
+          <time datetime="{{ record.date | isoDay }}">{{ record.date | displayDay }}</time>
+          {% if record.data.dateLabel %}<span>{{ record.data.dateLabel | escape }}</span>{% endif %}
+        </div>
       </a>
     </li>
     {% endfor %}
@@ -56,4 +64,6 @@ layout: base.njk
     <button type="button" class="reader-action" data-reset-search>전체 노트 보기</button>
   </div>
   {% endif %}
+  <a class="archive-home" href="/?folder={{ section }}">작업실에서 이 폴더 열기</a>
+  </div>
 </div>

@@ -1,6 +1,8 @@
-# RatelXD Notes
+# RatelXD의 작업실
 
-[ratelxd.github.io](https://ratelxd.github.io/)에서 운영하는 클라우드 보안 학습 노트와 작업 기록입니다. Eleventy가 Markdown 원고를 HTML로 만들고, `main`에 변경이 들어오면 GitHub Actions가 빌드와 Pages 배포를 진행합니다.
+[ratelxd.github.io](https://ratelxd.github.io/)에서 운영하는 클라우드 보안 포트폴리오입니다. 바탕화면의 탐색기에서 프로젝트, 학습 노트, 대외활동 폴더를 열 수 있습니다. 파일을 선택하고 Space를 누르면 미리보기가 열립니다. 전체 검색은 ⌘K 또는 Ctrl+K로 엽니다. [패킷 실습실](https://ratelxd.github.io/lab/)에서는 목적지 IP에 따라 라우팅 표의 어느 행이 선택되는지 실험할 수 있습니다.
+
+Eleventy가 Markdown 원고를 HTML로 만들고, `main`에 변경이 들어오면 GitHub Actions가 빌드와 Pages 배포를 진행합니다.
 
 ## 새 기록 올리기
 
@@ -21,7 +23,7 @@ date: 2026-11-20
 두 번째 수준 제목은 글의 목차에 자동으로 표시됩니다.
 ```
 
-날짜는 기록에 맞게 바꿉니다. 행사일이나 프로젝트 시작일을 표시하려면 `dateLabel: 행사일`처럼 날짜의 의미를 지정할 수 있습니다. 홈의 표지 글은 `src/_data/site.json`의 `coverSlug`에서 고릅니다. 그 외 글은 날짜순으로 목록에 들어갑니다.
+날짜는 기록에 맞게 바꿉니다. 행사일이나 프로젝트 시작일을 표시하려면 `dateLabel: 행사일`처럼 날짜의 의미를 지정할 수 있습니다. 홈에서 고정할 파일은 `src/_data/site.json`의 `pinned` 배열에 공개 주소를 순서대로 넣습니다. 각 폴더에는 글이 날짜순으로 표시됩니다.
 
 ## 스크린샷과 영상
 
@@ -62,4 +64,6 @@ npm run dev
 
 ## 사진과 서체
 
-표지의 원본은 Jon “ShakataGaNai” Davis의 [Network switches](https://commons.wikimedia.org/wiki/File:Network_switches.jpg)입니다. 잘라 쓰거나 두 가지 잉크 색으로 표현한 사진에도 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)이 적용됩니다. 글꼴은 Instrument Serif, 나눔명조, Pretendard를 자체 호스팅합니다. 라이선스 원문은 `src/assets/fonts/`와 `src/assets/licenses/`에 있습니다.
+바탕화면은 eimoberg가 찍은 지리산 사진을 가로·세로 화면에 맞게 잘라 사용합니다. [원본 사진](https://commons.wikimedia.org/wiki/File:Korea-Mountain-Jirisan-01.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/)
+
+탐색기의 계정 사진은 RatelXD의 GitHub 아바타입니다. 한글 글꼴은 Pretendard를 자체 호스팅합니다. 사진과 서체의 라이선스는 `src/assets/licenses/`와 `src/assets/fonts/`에 있습니다.

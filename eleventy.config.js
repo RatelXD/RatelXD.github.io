@@ -12,14 +12,19 @@ export default function (config) {
       )
     );
   }
-  config.addFilter("firstItems", (items, count) => items.slice(0, count));
+  config.addCollection("pinnedFiles", collection => {
+    const files = collection.getFilteredByGlob("src/{notes,projects,activities}/*.md");
+    return site.pinned.map(url => files.find(file => file.url === url)).filter(Boolean);
+  });
   config.addFilter("isoDay", date => date.toISOString().slice(0, 10));
   config.addFilter("displayDay", date => date.toISOString().slice(0, 10).replaceAll("-", "."));
   config.addFilter("assetPath", (asset, pageUrl) => posix.relative(pageUrl.endsWith("/") ? pageUrl : posix.dirname(pageUrl), asset));
-  config.addFilter("matchSlug", (entries, slug) => entries.find(entry => entry.fileSlug === slug));
-  config.addFilter("omitSlug", (entries, slug) => entries.filter(entry => entry.fileSlug !== slug));
   config.addFilter("sectionById", id => site.sections.find(section => section.id === id));
   config.addFilter("topics", items => [...new Set(items.map(item => item.data.topic).filter(Boolean))]);
+  config.addFilter("previewParagraph", html => {
+    const paragraph = html.match(/<p>([\s\S]*?)<\/p>/i)?.[1] || "";
+    return paragraph.replace(/([.!?…。])\s+(?:<a\b[^>]*>[^<]*<\/a>\s*)+$/i, "$1");
+  });
   config.amendLibrary("md", md => {
     md.core.ruler.push("sectionIds", state => {
       let number = 0;

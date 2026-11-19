@@ -1,0 +1,62 @@
+{% macro result(url, title, category, topic, summary, excerpt, dateLabel, date, image, imageAlt, family) %}
+<a class="desk-result" role="option" aria-selected="false" tabindex="-1" href="{{ url | escape }}"
+   data-desk-result data-category="{{ category | escape }}" data-family="{{ family | escape }}"
+   data-topic="{{ topic | escape }}" data-summary="{{ summary | escape }}"
+   data-excerpt="{{ excerpt | escape }}" data-date="{{ date | escape }}" data-date-label="{{ dateLabel | escape }}"
+   {% if image %}data-image="{{ image | escape }}" data-alt="{{ imageAlt | escape }}"{% endif %}>
+  <span class="desk-file-icon" aria-hidden="true"></span>
+  <span class="desk-result-text">
+    <span class="desk-result-name">{{ title | escape }}</span>
+    <span class="desk-result-location">{{ category | escape }}{% if topic %} / {{ topic | escape }}{% endif %}</span>
+  </span>
+</a>
+{% endmacro %}
+
+<dialog class="desk-modal desk-search" id="desk-search" aria-labelledby="desk-search-title">
+  <h2 id="desk-search-title" class="visually-hidden">작업실 검색</h2>
+  <div class="desk-query">
+    <span class="desk-magnifier" aria-hidden="true"></span>
+    <label for="desk-query-input" class="visually-hidden">파일, 주제, 도구 검색</label>
+    <input id="desk-query-input" type="search" role="combobox" aria-autocomplete="list"
+           aria-controls="desk-result-list" aria-expanded="true" autocomplete="off" spellcheck="false"
+           enterkeyhint="go" placeholder="파일, 주제, 도구 검색" autofocus>
+    <button class="desk-dismiss" data-desk-dismiss type="button" aria-label="검색 닫기"></button>
+  </div>
+  <p class="desk-results-count" role="status" aria-live="polite" aria-atomic="true" data-result-count></p>
+  <div id="desk-result-list" class="desk-result-list" role="listbox" aria-label="작업실 검색 결과">
+    {% for section in site.sections %}
+      {% for record in collections[section.id] %}
+        {% set excerpt = record.templateContent | previewParagraph | striptags | trim | truncate(260, true, '…') %}
+        {{ result(record.url, record.data.title, section.label, record.data.topic or '', record.data.description or '',
+                  excerpt, record.data.dateLabel or '발행', record.date | displayDay, record.data.image or '',
+                  record.data.imageAlt or '', section.id) }}
+      {% endfor %}
+    {% endfor %}
+    {{ result('/lab/', '패킷 실습실', '도구', '네트워크', '목적지 IPv4 주소에 맞는 경로를 라우팅 테이블에서 확인합니다.',
+              '', '', '', '', '', 'lab') }}
+    {{ result('/about/', 'RatelXD 소개', '프로필', '', '정보보안학과 RatelXD의 관심 분야와 공개 작업을 소개합니다.',
+              '', '', '', '', '', 'about') }}
+  </div>
+  <div class="desk-no-results" data-empty-search hidden>
+    <p>검색어에 맞는 항목이 없습니다.</p>
+    <button type="button" class="desk-reset" data-reset-query>검색어 지우기</button>
+  </div>
+  <div class="desk-search-keys" aria-hidden="true">
+    <span><kbd>↑</kbd> <kbd>↓</kbd> 이동</span><span><kbd>Enter</kbd> 열기</span><span><kbd>Esc</kbd> 닫기</span>
+  </div>
+</dialog>
+
+<dialog class="desk-modal desk-look" id="desk-look" aria-labelledby="desk-look-title">
+  <div class="desk-look-toolbar">
+    <span>빠른 보기</span>
+    <button class="desk-dismiss" data-desk-dismiss type="button" aria-label="빠른 보기 닫기"></button>
+  </div>
+  <div class="desk-look-body">
+    <div class="desk-look-meta"><span data-look-location></span><span data-look-date></span></div>
+    <h2 id="desk-look-title" tabindex="-1"></h2>
+    <p class="desk-look-summary" data-look-summary></p>
+    <img class="desk-look-image" data-look-image hidden alt="">
+    <p class="desk-look-excerpt" data-look-excerpt></p>
+  </div>
+  <div class="desk-look-actions"><a class="desk-open-file" data-open-original>문서 열기</a></div>
+</dialog>

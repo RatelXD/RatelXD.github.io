@@ -65,10 +65,32 @@ document.querySelectorAll("[data-note-search]").forEach(setUpNoteSearch);
 
 const contents = document.querySelector(".story-contents");
 if (contents) {
-  const compact = window.matchMedia("(max-width: 55rem)");
-  const setContentsSize = () => { contents.open = !compact.matches; };
+  const documentPage = contents.closest(".story-page");
+  const pane = contents.closest(".reader-scroll");
+  let previousLayout;
+  const setContentsSize = () => {
+    const layout = getComputedStyle(documentPage).display;
+    if (layout !== previousLayout) {
+      contents.open = layout === "grid";
+      previousLayout = layout;
+    }
+  };
   setContentsSize();
-  compact.addEventListener("change", setContentsSize);
+  if (pane && "ResizeObserver" in window) new ResizeObserver(setContentsSize).observe(pane);
+  else window.addEventListener("resize", setContentsSize);
+}
+
+const imageDialog = document.querySelector("[data-image-dialog]");
+const canPreview = typeof imageDialog?.showModal === "function";
+if (canPreview) {
+  const closeButton = imageDialog.querySelector("[data-close-image]");
+  closeButton.addEventListener("click", () => imageDialog.close());
+  imageDialog.addEventListener("click", event => {
+    if (event.target !== imageDialog) return;
+    const bounds = imageDialog.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right ||
+        event.clientY < bounds.top || event.clientY > bounds.bottom) imageDialog.close();
+  });
 }
 
 for (const image of document.querySelectorAll(".prose img")) {
@@ -82,9 +104,25 @@ for (const image of document.querySelectorAll(".prose img")) {
   const original = document.createElement("a");
   original.className = "image-original";
   original.href = image.dataset.full || image.src;
-  original.setAttribute("aria-label", `${image.alt || "이미지"} 원본 보기`);
+  const action = canPreview ? "확대 보기" : "원본 보기";
+  original.setAttribute("aria-label", `${image.alt || "이미지"} ${action}`);
   const label = document.createElement("span");
-  label.textContent = "원본 보기";
+  label.textContent = action;
   visual.replaceWith(original);
   original.append(visual, label);
+  if (canPreview) {
+    original.setAttribute("aria-haspopup", "dialog");
+    original.addEventListener("click", event => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      const view = new Image();
+      view.alt = image.alt;
+      view.src = original.href;
+      imageDialog.querySelector("[data-image-stage]").replaceChildren(view);
+      const caption = image.closest("figure")?.querySelector("figcaption");
+      imageDialog.querySelector("[data-image-caption]").textContent = caption?.textContent.trim() || image.alt;
+      imageDialog.querySelector("[data-image-source]").href = original.href;
+      imageDialog.showModal();
+    });
+  }
 }

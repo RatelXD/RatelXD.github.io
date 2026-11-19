@@ -1,47 +1,95 @@
+{% from "os-icons.njk" import icon, tile %}
+{% set home = page.url == "/" %}
+{% set lab = page.url == "/lab/" %}
+{% set profile = page.url == "/about/" %}
+{% set appName = "파일 탐색기" if home else ("패킷 실습실" if lab else ("프로필" if profile else title)) %}
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% if page.url == "/" %}RatelXD Notes | 클라우드 보안 기록{% else %}{{ title | escape }} | RatelXD Notes{% endif %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#213650">
+  <title>{% if home %}RatelXD의 작업실 | 클라우드 보안 포트폴리오{% else %}{{ title | escape }} | RatelXD의 작업실{% endif %}</title>
   <meta name="description" content="{{ description | default(site.description) | escape }}">
   {% if page.url != "/404.html" %}<link rel="canonical" href="{{ site.url }}{{ page.url }}">{% endif %}
-  <meta property="og:title" content="{{ title | default('클라우드 보안 기록') | escape }} | RatelXD Notes">
+  <meta property="og:type" content="{% if section and page.url != '/' + section + '/' %}article{% else %}website{% endif %}">
+  <meta property="og:title" content="{% if home %}RatelXD의 작업실{% else %}{{ title | escape }} | RatelXD의 작업실{% endif %}">
   <meta property="og:description" content="{{ description | default(site.description) | escape }}">
-  <meta property="og:type" content="{% if section and page.fileSlug and page.url != '/' + section + '/' %}article{% else %}website{% endif %}">
   <meta property="og:url" content="{{ site.url }}{{ page.url }}">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:image" content="{{ site.url }}/assets/media/social.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="지리산 바탕화면 위에 프로젝트, 학습 노트, 대외활동 폴더가 열린 RatelXD의 작업실">
   <link rel="icon" href="/assets/media/icon.png" type="image/png">
-  <link rel="stylesheet" href="{% if page.url == '/404.html' %}/assets/css/site.css{% else %}{{ '/assets/css/site.css' | assetPath(page.url) }}{% endif %}">
-  {% if page.url != "/" %}
-  <link rel="stylesheet" href="{% if page.url == '/404.html' %}/assets/css/reading.css{% else %}{{ '/assets/css/reading.css' | assetPath(page.url) }}{% endif %}">
-  <script src="/assets/js/reading.js" defer></script>
+  <link rel="stylesheet" href="/assets/css/site.css">
+  <script src="/assets/js/window.js" defer></script>
+  {% if home %}
+  <link rel="stylesheet" href="/assets/css/desk-dialogs.css">
+  <script src="/assets/js/finder.js" defer></script>
+  <script src="/assets/js/desk-dialogs.js" defer></script>
+  {% elif lab %}
+  <link rel="stylesheet" href="/assets/css/lab.css"><script src="/assets/js/lab.js" defer></script>
+  {% else %}
+  <link rel="stylesheet" href="/assets/css/reading.css"><script src="/assets/js/reading.js" defer></script>
   {% endif %}
 </head>
-<body class="{% if page.url == '/' %}front-page{% else %}inner-page{% endif %}">
+<body class="workspace{% if home %} finder-page{% else %} reader-page{% endif %}">
+  {% include "symbols.njk" %}
   <a class="skip" href="#main">본문으로 건너뛰기</a>
-  <header class="mast container">
-    {% if page.url == "/" %}
-    <div class="nameplate">
-      <h1 class="wordmark"><a href="/" aria-label="RatelXD Notes 홈">RatelXD Notes</a></h1>
-      <p class="colophon">클라우드와 인프라를 공부하는<br> 정보보안학과 학생의 기록.</p>
-    </div>
-    {% endif %}
-    <nav class="mast-nav" aria-label="주 메뉴">
-      {% if page.url != "/" %}<a class="smallmark" href="/" aria-label="RatelXD Notes 홈">RatelXD Notes</a>{% endif %}
-      <div class="nav-sections">
-        {% for item in site.sections %}<a href="/{{ item.id }}/"{% if section == item.id %} aria-current="{% if page.url == '/' + item.id + '/' %}page{% else %}location{% endif %}"{% endif %}>{{ item.label }}</a>{% endfor %}
+  <header class="system-bar">
+    <a class="os-brand" href="/" aria-label="RatelXD 작업실 홈">{{ icon("logo",22) }}<strong>RatelXD</strong></a>
+    <details class="system-menu">
+      <summary>이동</summary><nav class="menu-sheet" aria-label="이동 메뉴">
+        <a href="/" {% if home %}data-folder="home"{% endif %}>내 작업실</a>
+        {% for item in site.sections %}<a href="/{{ item.id }}/"{% if home %} data-folder="{{ item.id }}"{% endif %}>{{ item.label }}</a>{% endfor %}
+        <a href="/lab/">패킷 실습실</a><a href="/about/">프로필</a>
+      </nav>
+    </details>
+    <details class="system-menu">
+      <summary>사용법</summary><div class="menu-sheet help-sheet">
+        <p>폴더를 열고 파일 제목을 누르면 본문을 읽을 수 있습니다.</p>
+        <dl><div><dt>전체 검색</dt><dd>⌘ / Ctrl + K</dd></div><div><dt>선택한 파일 미리보기</dt><dd>Space</dd></div><div><dt>미리보기 닫기</dt><dd>Esc</dd></div></dl>
       </div>
-      <div class="nav-author"><a href="/about/"{% if page.url == "/about/" %} aria-current="page"{% endif %}>소개</a><a class="git-link" href="{{ site.github }}" aria-label="RatelXD GitHub 프로필">GitHub</a></div>
-    </nav>
+    </details>
+    <div class="system-right">
+      {% if home %}<button type="button" class="menu-search enhance" data-spotlight aria-label="전체 검색">{{ icon("search",17) }}</button>{% else %}<a class="menu-search" href="/?search=1" aria-label="전체 검색">{{ icon("search",17) }}</a>{% endif %}
+      <time class="system-clock" aria-label="현재 시각"></time>
+    </div>
   </header>
-  <main id="main" tabindex="-1">{{ content | safe }}</main>
-  <footer class="container site-footer">
-    <div class="footer-line"><a class="smallmark" href="/">RatelXD Notes</a><nav aria-label="바닥글"><a href="/about/">소개</a><a href="{{ site.github }}">GitHub</a></nav></div>
-    {% if page.url == "/" %}
-    <p class="credit">표지 사진 <a href="https://commons.wikimedia.org/wiki/File:Network_switches.jpg">Network switches, Jon “ShakataGaNai” Davis</a>. 원본을 잘라 색을 조정했습니다. <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></p>
-    {% endif %}
-  </footer>
+  <main id="main" class="workspace-stage" tabindex="-1">
+    <nav class="desktop-files" aria-label="바탕화면 바로가기">
+      <a href="/about/"><span class="readme-icon" aria-hidden="true"><i></i><b>R</b></span><span>내 소개</span></a>
+      <a href="/lab/">{{ tile("lab","lab") }}<span>패킷 실습실</span></a>
+    </nav>
+    <div class="os-window{% if not home %} reader-window{% endif %}" data-window>
+      <div class="window-bar" data-titlebar>
+        <div class="traffic enhance" role="group" aria-label="창 조작">
+          <button type="button" data-win="close" class="traffic-close" aria-label="창 닫기" title="창 닫기"><i></i></button>
+          <button type="button" data-win="minimize" class="traffic-min" aria-label="창 최소화" title="창 최소화"><i></i></button>
+          <button type="button" data-win="zoom" class="traffic-zoom" aria-label="창 확대" aria-pressed="false" title="창 확대"><i></i></button>
+        </div>
+        <div class="window-title">
+          {% if home %}<button type="button" class="back-folder enhance" data-up hidden aria-label="상위 폴더로" title="상위 폴더">{{ icon("back",17) }}</button>{% else %}<a class="back-folder" href="/{% if section %}?folder={{ section }}{% endif %}" aria-label="파일 탐색기로" title="파일 탐색기로">{{ icon("back",17) }}</a>{% endif %}
+          {{ icon("folder" if home else ("lab" if lab else ("person" if profile else "notes")),17) }}
+          <strong data-window-title>{{ appName | escape }}</strong>
+        </div>
+        {% if home %}<button type="button" class="finder-search enhance" data-spotlight aria-labelledby="search-name search-shortcut" aria-keyshortcuts="Control+k Meta+k">{{ icon("search",15) }}<span id="search-name">검색</span> <kbd data-shortcut id="search-shortcut">⌘ K</kbd></button>{% else %}<a class="back-home" href="/">작업실</a>{% endif %}
+      </div>
+      {% if home %}{{ content | safe }}{% else %}<div class="reader-scroll" tabindex="0" role="region" aria-label="{{ title | escape }} 내용">{{ content | safe }}</div>{% endif %}
+    </div>
+    <button type="button" class="restore-window" data-restore hidden>{{ icon("desktop",24) }}<span>{{ appName | escape }} 열기</span></button>
+  </main>
+  <div class="dock-area">
+    <nav class="dock" aria-label="앱 Dock">
+      <a href="/" class="dock-app{% if home %} running{% endif %}" {% if home %}data-launch-finder{% endif %} aria-label="파일 탐색기">{{ tile("finder","folder") }}<span class="dock-label">탐색기</span></a>
+      {% if home %}<button type="button" class="dock-app enhance" data-spotlight aria-label="전체 검색">{{ tile("search","search") }}<span class="dock-label">검색</span></button>{% else %}<a class="dock-app" href="/?search=1" aria-label="전체 검색">{{ tile("search","search") }}<span class="dock-label">검색</span></a>{% endif %}
+      <a href="/lab/" class="dock-app{% if lab %} running{% endif %}" {% if lab %}data-current-app{% endif %} aria-label="패킷 실습실">{{ tile("lab","lab") }}<span class="dock-label">패킷 실습실</span></a>
+      <a href="/about/" class="dock-app{% if profile %} running{% endif %}" {% if profile %}data-current-app{% endif %} aria-label="RatelXD 프로필">{{ tile("profile","person") }}<span class="dock-label">프로필</span></a>
+      <span class="dock-divider" aria-hidden="true"></span>
+      <a href="{{ site.github }}" class="dock-app" aria-label="GitHub 프로필">{{ tile("git","github") }}<span class="dock-label">GitHub</span></a>
+    </nav>
+  </div>
+  {% if home %}{% include "desk-dialogs.njk" %}{% endif %}
 </body>
 </html>

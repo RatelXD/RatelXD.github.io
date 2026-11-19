@@ -3,45 +3,57 @@ layout: base.njk
 ---
 {% set category = section | sectionById %}
 {% set contents = content | sectionLinks %}
-<article class="container story-page">
+<article class="story-page{% if not contents.length %} without-contents{% endif %}">
   <header class="story-heading">
-    <nav class="story-path" aria-label="현재 글의 위치"><a href="/{{ section }}/">{{ category.label | escape }}</a>{% if topic %}<span>{{ topic | escape }}</span>{% endif %}</nav>
+    <nav class="story-path" aria-label="문서 위치">
+      <a href="/?folder={{ section }}">작업실</a><a href="/{{ section }}/">{{ category.label | escape }}</a>
+    </nav>
     <h1>{{ title | escape }}</h1>
     {% if description %}<p class="story-lede">{{ description | escape }}</p>{% endif %}
     <div class="story-byline">
       <a href="/about/" rel="author">{{ site.name }}</a>
       <span>{{ dateLabel | default('발행') | escape }} <time datetime="{{ page.date | isoDay }}">{{ page.date | displayDay }}</time></span>
+      {% if topic %}<span>{{ topic | escape }}</span>{% endif %}
     </div>
   </header>
-  <div class="story-layout{% if not contents.length %} without-contents{% endif %}">
-    {% if contents.length %}
-    <aside class="story-aside">
-      <details open class="story-contents">
-        <summary>이 글의 목차</summary>
-        <nav aria-label="본문 목차">
-          <ol>{% for item in contents %}<li><a href="#{{ item.id }}">{{ item.label | escape }}</a></li>{% endfor %}</ol>
-        </nav>
-      </details>
-    </aside>
-    {% endif %}
-    <div class="story-body">
-      {% if diagram == "subnet" %}{% include "subnet.njk" %}{% endif %}
-      <div class="prose">{{ content | safe }}</div>
-      {% if video and (video.youtubeId or video.src) %}
-      <figure class="story-video">
-        {% if video.youtubeId %}
-        <iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/{{ video.youtubeId | urlencode }}" title="{{ video.title | default(title) | escape }}" referrerpolicy="strict-origin-when-cross-origin" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>
-        {% else %}
-        <video controls playsinline preload="metadata"{% if video.poster %} poster="{{ video.poster | escape }}"{% endif %} aria-label="{{ video.title | default(title) | escape }}">
-          <source src="{{ video.src | escape }}"{% if video.type %} type="{{ video.type | escape }}"{% endif %}>
-          {% if video.captions %}<track kind="captions" src="{{ video.captions | escape }}" srclang="ko" label="한국어" default>{% endif %}
-          <a href="{{ video.src | escape }}">영상 파일 열기</a>
-        </video>
-        {% endif %}
-        {% if video.title %}<figcaption>{{ video.title | escape }}</figcaption>{% endif %}
-      </figure>
+  {% if contents.length %}
+  <aside class="story-aside">
+    <details open class="story-contents">
+      <summary>문서 목차</summary>
+      <nav aria-label="본문 목차">
+        <ol>{% for item in contents %}<li><a href="#{{ item.id }}">{{ item.label | escape }}</a></li>{% endfor %}</ol>
+      </nav>
+    </details>
+  </aside>
+  {% endif %}
+  <div class="story-body">
+    {% if diagram == "subnet" %}{% include "subnet.njk" %}{% endif %}
+    <div class="prose">{{ content | safe }}</div>
+    {% if image %}<noscript><a class="text-link" href="{{ image | escape }}">{{ imageAlt | default('본문 이미지') | escape }} 원본 보기</a></noscript>{% endif %}
+    {% if video and (video.youtubeId or video.src) %}
+    <figure class="story-video">
+      {% if video.youtubeId %}
+      <iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/{{ video.youtubeId | urlencode }}" title="{{ video.title | default(title) | escape }}" referrerpolicy="strict-origin-when-cross-origin" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>
+      {% else %}
+      <video controls playsinline preload="metadata"{% if video.poster %} poster="{{ video.poster | escape }}"{% endif %} aria-label="{{ video.title | default(title) | escape }}">
+        <source src="{{ video.src | escape }}"{% if video.type %} type="{{ video.type | escape }}"{% endif %}>
+        {% if video.captions %}<track kind="captions" src="{{ video.captions | escape }}" srclang="ko" label="한국어" default>{% endif %}
+        <a href="{{ video.src | escape }}">영상 파일 열기</a>
+      </video>
       {% endif %}
-      <footer class="story-end"><a class="text-link" href="/{{ section }}/">{{ category.label | escape }} 목록으로</a></footer>
-    </div>
+      {% if video.title %}<figcaption>{{ video.title | escape }}</figcaption>{% endif %}
+    </figure>
+    {% endif %}
+    <footer class="story-end">
+      {% if page.url == "/notes/routes/" %}<a class="reader-primary" href="/lab/">패킷 실습실 열기</a>{% endif %}
+      <a class="text-link" href="/{{ section }}/">{{ category.label | escape }} 목록으로</a>
+    </footer>
   </div>
 </article>
+{% if '<img' in content %}
+<dialog class="reader-image-dialog" aria-labelledby="image-dialog-title" data-image-dialog>
+  <header><h2 id="image-dialog-title">이미지 미리보기</h2><button type="button" class="reader-action" data-close-image>닫기</button></header>
+  <div class="image-stage" data-image-stage></div>
+  <footer><p data-image-caption></p><a class="text-link" data-image-source>원본 파일 열기</a></footer>
+</dialog>
+{% endif %}
