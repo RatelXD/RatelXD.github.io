@@ -35,9 +35,9 @@ permalink: /about/
     </section>
     {% if site.wallpaper %}
     <section class="profile-row wallpaper-credit" id="wallpaper">
-      <h2>배경 사진</h2>
-      <div><p><a href="{{ site.wallpaper.creditUrl | escape }}">{{ site.wallpaper.title | escape }}</a>, {{ site.wallpaper.author | escape }}.</p>
-      <p>화면 크기에 맞춰 잘라 WebP로 변환했습니다. {% if site.wallpaper.licenseUrl %}<a href="{{ site.wallpaper.licenseUrl | escape }}">{{ site.wallpaper.license | escape }}</a>{% else %}{{ site.wallpaper.license | escape }}{% endif %}</p></div>
+      <h2>바탕화면과 아이콘</h2>
+      <div><p>배경은 {{ site.wallpaper.author }}의 <a href="{{ site.wallpaper.creditUrl | escape }}">{{ site.wallpaper.title | escape }}</a>를 가로·세로 화면에 맞게 잘라 사용했습니다. <a href="{{ site.wallpaper.licenseUrl | escape }}">{{ site.wallpaper.license | escape }}</a></p>
+      <p>Finder와 Dock에는 WhiteSur 아이콘과 이 작업실용 아이콘을 사용했습니다. <a href="/assets/licenses/Mac-icons.txt">아이콘 원본과 라이선스</a></p></div>
     </section>
     {% endif %}
   </div>

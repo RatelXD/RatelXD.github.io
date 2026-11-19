@@ -1,0 +1,81 @@
+:root {
+  --menu-bar-ink: #fff;
+  --menu-bar-tint: rgb(35 23 47 / .42);
+  --menu-bar-glint: rgb(255 255 255 / .13);
+  --menu-bar-hover: rgb(255 255 255 / .22);
+  --menu-text-shadow: 0 1px 3px rgb(23 13 41 / .48);
+  --menu-panel: rgb(250 249 251 / .95);
+  --menu-ink: #242326;
+  --menu-muted: #626065;
+  --menu-disabled: #79767b;
+  --menu-separator: rgb(27 25 31 / .15);
+  --menu-tint: #1765ce;
+  --menu-selected: #fff;
+  --menu-track: #99969c;
+  --menu-knob: #fff;
+  --menu-float: 0 16px 36px -8px rgb(19 14 29 / .38), 0 3px 11px rgb(24 19 34 / .18), inset 0 0 0 1px rgb(255 255 255 / .65);
+  --menu-ring: #1562c4;
+}
+.system-bar { position:relative; z-index:8; display:flex; align-items:center; justify-content:space-between; min-width:0; height:28px; padding:0 clamp(12px,1.2vw,22px); color:var(--menu-bar-ink); background:var(--menu-bar-tint); -webkit-backdrop-filter:blur(24px) saturate(1.25); backdrop-filter:blur(24px) saturate(1.25); box-shadow:inset 0 -1px var(--menu-bar-glint); font:500 .84rem/1.22 var(--font-body); letter-spacing:-.012em; user-select:none; }
+.mac-app-menus,.mac-extras { display:flex; align-items:center; height:100%; min-width:0; }
+.mac-extras { margin-left:auto; gap:2px; }
+.system-bar .mac-menu { position:relative; flex:none; }
+.system-bar summary,.system-bar .status-search { box-sizing:border-box; display:flex; justify-content:center; align-items:center; gap:4px; height:26px; min-width:29px; margin:0; padding:0 8px; color:var(--menu-bar-ink); border:0; border-radius:4px; font:inherit; line-height:1; list-style:none; text-shadow:var(--menu-text-shadow); background:transparent; cursor:default; white-space:nowrap; }
+.system-bar summary::-webkit-details-marker { display:none; }
+.system-bar summary::marker { content:""; }
+.mac-menu[open] > summary,.system-bar .status-search:hover { color:var(--menu-bar-ink); background:var(--menu-bar-hover); }
+.system-bar summary:focus-visible,.system-bar .status-search:focus-visible { outline:2px solid var(--menu-bar-ink); outline-offset:-3px; }
+.system-bar .front-menu > summary { font-weight:700; }
+.system-bar .apple-menu > summary { min-width:32px; padding-inline:7px; }
+.system-bar .status-menu > summary,.system-bar .status-search { padding-inline:5px; }
+.system-bar .status-search:hover { text-decoration:none; }
+.system-bar .system-clock { display:block; flex:none; padding-inline:4px 1px; font:inherit; font-size:.82rem; font-variant-numeric:tabular-nums; line-height:1; text-shadow:var(--menu-text-shadow); white-space:nowrap; }
+.system-bar .mac-sheet { position:absolute; top:calc(100% + 2px); left:0; z-index:1; min-width:196px; max-width:calc(100dvi - 12px); max-height:calc(100dvh - 46px); overflow:auto; overscroll-behavior:contain; padding:5px; transform:translateX(var(--menu-offset,0px)); background:var(--menu-panel); -webkit-backdrop-filter:blur(26px) saturate(1.3); backdrop-filter:blur(26px) saturate(1.3); color:var(--menu-ink); font-size:.84rem; font-weight:400; line-height:1.3; border-radius:7px; box-shadow:var(--menu-float); text-shadow:none; }
+.system-bar details:not([open]) > :not(summary) { display:none; }
+.status-menu .mac-sheet { left:auto; right:0; }
+.mac-sheet hr { height:1px; border:0; background:var(--menu-separator); margin:4px 8px; }
+.system-bar .mac-item { width:100%; display:grid; grid-template-columns:11px minmax(0,1fr) auto; align-items:center; gap:5px; min-height:24px; padding:3px 9px 3px 3px; margin:0; background:transparent; border:0; border-radius:4px; color:var(--menu-ink); font:inherit; white-space:nowrap; text-align:left; text-decoration:none; cursor:default; }
+.mac-item .item-check { text-align:center; font-size:.8rem; font-weight:600; }
+.mac-item[data-checked="true"] .item-check::before { content:"✓"; }
+.mac-item kbd { justify-self:end; padding-inline-start:18px; color:var(--menu-muted); font:inherit; line-height:1; }
+.system-bar .mac-item:is(:hover,:focus-visible):not(:disabled) { color:var(--menu-selected); background:var(--menu-tint); outline:0; }
+.mac-item:is(:hover,:focus-visible):not(:disabled) kbd { color:var(--menu-selected); }
+.system-bar .mac-item:disabled { color:var(--menu-disabled); opacity:.7; cursor:default; }
+.system-bar .mac-item:disabled kbd { color:inherit; }
+.help-menu-panel p { max-width:220px; padding:6px 10px 8px; color:var(--menu-muted); font-size:.79rem; line-height:1.5; }
+.system-bar .status-sheet,.system-bar .control-sheet { min-width:175px; padding:12px 14px; border-radius:10px; }
+.status-sheet strong,.control-sheet > strong { display:block; font-size:.84rem; font-weight:650; }
+.status-sheet p { margin-top:5px; color:var(--menu-muted); font-size:.8rem; }
+.system-bar .control-sheet { min-width:215px; }
+.control-group { display:grid; gap:1px; padding:6px 0 0; margin:0; border:0; }
+.control-group label { display:flex; align-items:center; justify-content:space-between; gap:18px; min-height:35px; }
+.control-group input { appearance:none; position:relative; display:block; flex:none; width:30px; height:18px; margin:0; border:0; border-radius:10px; background:var(--menu-track); cursor:pointer; }
+.control-group input::before { content:""; position:absolute; width:14px; height:14px; top:2px; left:2px; border-radius:50%; background:var(--menu-knob); box-shadow:0 1px 2px var(--menu-separator); }
+.control-group input:checked { background:var(--menu-tint); }
+.control-group input:checked::before { transform:translateX(12px); }
+.control-group input:focus-visible { outline:2px solid var(--menu-ring); outline-offset:2px; }
+.system-preference { padding-top:5px; font-size:.75rem; color:var(--menu-muted); }
+.battery-menu summary { position:relative; }
+.battery-fill { position:absolute; top:50%; left:calc(50% - 8px); width:13px; height:5px; border-radius:1px; background:currentColor; transform:translateY(-50%) scaleX(var(--battery-level,0)); transform-origin:left; pointer-events:none; }
+.mac-announcement { position:fixed; top:calc(100% + 7px); right:12px; max-width:calc(100% - 24px); padding:7px 12px; border-radius:7px; font-size:.82rem; background:var(--menu-panel); color:var(--menu-ink); box-shadow:var(--menu-float); }
+.mac-announcement:empty { display:none; }
+html:not(.has-desk-js) .mac-js,html.has-desk-js .no-mac-js { display:none; }
+html.desk-reduce-motion *,html.desk-reduce-motion *::before,html.desk-reduce-motion *::after { scroll-behavior:auto!important; animation:none!important; transition:none!important; }
+@media (max-width:48rem) {
+  .system-bar { height:37px; padding-inline:6px; }
+  .system-bar summary,.system-bar .status-search { min-width:34px; height:35px; padding-inline:6px; }
+  .system-bar .mac-sheet { top:calc(100% + 2px); }
+  .system-bar .mac-item { min-height:36px; }
+  .mac-menu.full-menu,.mac-menu.wifi-menu,.mac-menu.battery-menu { display:none; }
+  .mac-extras { gap:0; }
+  .system-bar .system-clock { padding-inline:3px 2px; font-size:.78rem; }
+  .mac-extras .status-menu > summary { min-width:32px; }
+}
+@media (max-width:24rem) {
+  .system-bar .view-menu { display:none; }
+}
+@media (forced-colors:active) {
+  .system-bar .mac-sheet { border:1px solid CanvasText; }
+  .control-group input { appearance:auto; }
+  .control-group input::before { display:none; }
+}

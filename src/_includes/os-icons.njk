@@ -1,17 +1,2 @@
 {% macro icon(name, size = 20) %}<svg aria-hidden="true" focusable="false" width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" class="glyph"><use href="#symbol-{{ name }}"/></svg>{% endmacro %}
-
-{% macro folder(id, shape) %}<span aria-hidden="true" class="folder-icon folder-{{ id }}"><i></i><b></b><span>{{ icon(shape, 28) }}</span></span>{% endmacro %}
-
-{% macro fileRow(entry) %}
-{% set sectionInfo = entry.data.section | sectionById %}
-<li class="file-row">
-  <a class="file-link" data-file href="{{ entry.url }}">
-    <span class="doc-icon doc-{{ entry.data.section }}" aria-hidden="true">{{ icon(entry.data.section,18) }}</span>
-    <span class="file-description"><strong>{{ entry.data.title | escape }}</strong><small>{{ sectionInfo.label }} <span aria-hidden="true">/</span> {{ entry.data.topic | escape }}</small></span>
-    <time datetime="{{ entry.date | isoDay }}">{{ entry.date | displayDay }}</time>
-  </a>
-  <button type="button" class="quick-key enhance" data-preview-url="{{ entry.url }}" aria-label="{{ entry.data.title | escape }} 미리보기" title="미리보기">{{ icon("eye",18) }}</button>
-</li>
-{% endmacro %}
-
-{% macro tile(kind, symbol) %}<span class="app-tile app-{{ kind }}" aria-hidden="true">{{ icon(symbol,30) }}</span>{% endmacro %}
+{% macro appImage(name, size = 48) %}<img src="/assets/media/mac/{{ name }}.png" width="{{ size }}" height="{{ size }}" alt="" draggable="false">{% endmacro %}

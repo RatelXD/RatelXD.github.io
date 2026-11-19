@@ -1,0 +1,38 @@
+Mac workspace icon credits
+
+The ten icons below are raster exports of WhiteSur icon theme artwork by
+Vince Liuice and contributors. The icon artwork, the corresponding source
+vectors and these PNG copies are distributed under GNU GPL version 3.
+See WhiteSur-COPYING.txt and WhiteSur-AUTHORS.txt in this directory.
+
+Project: https://github.com/vinceliuice/WhiteSur-icon-theme
+Revision: 73d8040da51a9ed74e47c7366e7e9ff437601a5c
+Source tree: https://github.com/vinceliuice/WhiteSur-icon-theme/tree/73d8040da51a9ed74e47c7366e7e9ff437601a5c
+
+Each original SVG is included alongside this notice at WhiteSur-src/<name>.svg.
+The image used by the site is /assets/media/mac/<name>.png. The visual artwork
+was rasterized to transparent PNG. Its design and colors are unchanged.
+The site favicon is a copy of the folder icon. The social.png preview shows
+the desktop with these icons.
+
+Site name       Upstream SVG path
+finder          src/apps/scalable/file-manager.svg
+folder          src/places/scalable/folder.svg
+lab             src/apps/scalable/utilities-system-monitor.svg
+preview         original/eog.svg
+contacts        original/addressbook.svg
+browser         src/apps/scalable/safari.svg
+document        src/mimes/scalable/text-x-generic.svg
+disk            src/devices/scalable/drive-harddisk.svg
+trash           src/places/scalable/user-trash.svg
+trash-full      src/places/scalable/user-trash-full.svg
+
+Original portfolio artwork
+The ruled notepad (notes.png), file shortcut badge (alias.png) and document
+stack (stack.png) were drawn for this portfolio. Their editable vectors are
+provided in /assets/media/mac/source/. These three icons are separate from
+the WhiteSur icon theme.
+
+The Apple menu silhouette comes from Simple Icons 14.15.0 (CC0).
+https://github.com/simple-icons/simple-icons/blob/14.15.0/icons/apple.svg
+https://github.com/simple-icons/simple-icons/blob/14.15.0/LICENSE.md

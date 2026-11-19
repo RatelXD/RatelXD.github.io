@@ -28,7 +28,7 @@ layout: base.njk
   {% endif %}
   <div class="story-body">
     {% if diagram == "subnet" %}{% include "subnet.njk" %}{% endif %}
-    <div class="prose">{{ content | safe }}</div>
+    <div class="prose">{{ content | replace("<pre>", '<pre tabindex="0">') | safe }}</div>
     {% if image %}<noscript><a class="text-link" href="{{ image | escape }}">{{ imageAlt | default('본문 이미지') | escape }} 원본 보기</a></noscript>{% endif %}
     {% if video and (video.youtubeId or video.src) %}
     <figure class="story-video">

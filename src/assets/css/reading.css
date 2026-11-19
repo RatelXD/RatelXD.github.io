@@ -1,6 +1,9 @@
 /* The document outline and folder list follow the width of the working window. */
 :root {
   --reader-sheet: var(--color-paper);
+  --reader-matte: #e6e5e8;
+  --reader-photo-matte: #77777b;
+  --reader-page-edge: rgb(46 44 52 / .2);
   --reader-rail-bg: var(--panel-title);
   --reader-rail-hover: var(--color-paper-3);
   --reader-ink: var(--color-ink);
@@ -141,32 +144,11 @@
 .record-image { align-self: center; }
 .record-image img { display: block; width: 100%; height: auto; max-height: 5.5rem; object-fit: contain; }
 .file-symbol {
-  width: 26px;
-  height: 33px;
-  position: relative;
-  margin: 2px auto;
-  border: 1px solid var(--reader-file);
-  border-radius: 3px;
-  background: var(--reader-sheet);
-}
-.file-symbol::before {
-  content: "";
   display: block;
-  width: 7px;
-  height: 7px;
-  margin-left: auto;
-  background: var(--reader-selected);
-  border: solid var(--reader-file);
-  border-width: 0 0 1px 1px;
-}
-.file-symbol::after {
-  content: "";
-  position: absolute;
-  left: 5px;
-  top: 13px;
-  width: 14px;
-  height: 6px;
-  border-block: 1px solid var(--reader-file);
+  width: 31px;
+  height: 35px;
+  margin: 2px auto;
+  background: url("../media/mac/document.png") center / contain no-repeat;
 }
 .archive-empty { padding-block: var(--space-lg); color: var(--reader-muted); }
 .reader-action, .reader-primary {
@@ -201,6 +183,18 @@
 .story-page {
   grid-template-areas: "outline heading" "outline body";
   grid-template-rows: auto 1fr;
+  isolation: isolate;
+  background: var(--reader-matte);
+}
+.story-page::before {
+  content: "";
+  grid-column: -2 / -1;
+  grid-row: 1 / -1;
+  margin: var(--space-sm) var(--space-md);
+  background: var(--reader-sheet);
+  box-shadow: 0 1px 3px var(--reader-page-edge);
+  pointer-events: none;
+  z-index: -1;
 }
 .story-page.without-contents { grid-template-columns: minmax(0,1fr); grid-template-areas: "heading" "body"; }
 .story-heading, .story-body {
@@ -330,7 +324,7 @@
 .reader-image-dialog h2 { font-size: 1rem; }
 .reader-image-dialog footer { color: var(--reader-muted); font-size: .875rem; }
 .reader-image-dialog footer a { flex: none; padding-block: var(--space-xs); color: var(--reader-link); text-decoration: underline; }
-.image-stage { overflow: auto; min-width: 0; min-height: 0; background: var(--reader-rail-bg); }
+.image-stage { overflow: auto; min-width: 0; min-height: 0; padding: var(--space-xs); background: var(--reader-photo-matte); }
 .image-stage img { display: block; margin: auto; width: auto; max-width: 100%; height: auto; max-height: calc(100dvh - 11rem); object-fit: contain; }
 
 .author-page, .missing-page { max-width: 50rem; margin-inline: auto; padding: var(--reader-block) var(--reader-inset); }
@@ -342,9 +336,9 @@
   width: clamp(4.8rem,12cqi,7.2rem);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: var(--reader-ink);
-  color: var(--reader-sheet);
-  font: 700 clamp(2.4rem,6.5cqi,4rem)/1 var(--font-body);
+  background: var(--reader-rail-bg) url("../media/profile.webp") center / cover no-repeat;
+  box-shadow: inset 0 0 0 1px var(--reader-page-edge);
+  font-size: 0;
 }
 .author-heading h1 { font-size: clamp(2rem,4.6cqi,3rem); }
 .author-heading p { margin: var(--space-2xs) 0 var(--space-sm); color: var(--reader-text); }
@@ -367,6 +361,8 @@
 .missing-page p { margin-block: var(--space-md); }
 @container document-pane (max-width: 45rem) {
   .archive-page, .story-page { display: block; }
+  .story-page { background: var(--reader-sheet); }
+  .story-page::before { display: none; }
   .folder-rail { display: flex; gap: var(--space-2xs); flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--reader-rule); padding: var(--space-xs) var(--reader-inset); }
   .folder-shortcut { min-height: 40px; gap: var(--space-xs); padding-inline: var(--space-xs); font-size: .9rem; }
   .story-heading { padding-bottom: var(--space-md); }

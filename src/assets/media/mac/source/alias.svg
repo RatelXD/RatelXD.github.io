@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <title>File alias</title>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e8e8e8"/></linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="135%" height="145%"><feGaussianBlur stdDeviation=".7"/></filter>
+  </defs>
+  <rect x="2" y="3" width="28" height="27.5" rx="6" fill="#000" opacity=".34" filter="url(#shadow)"/>
+  <rect x="2.2" y="2" width="27.6" height="27.3" rx="5.5" fill="url(#paper)" stroke="#9c9c9c" stroke-width=".7"/>
+  <path d="M7 23.3c1.5-7.3 5.5-11.9 11.9-14.1l-3.3-3.7 11 1.5-2.3 10.8-3-4.1C15.1 14.3 10.7 18.4 7 23.3Z" fill="#272729"/>
+</svg>

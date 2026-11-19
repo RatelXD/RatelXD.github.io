@@ -1,0 +1,42 @@
+{% from "os-icons.njk" import icon %}
+
+{% macro tile(url, name, kind, art, summary="", folder="", date="", displayDate="", image="", excerpt="", alias=false, topic="") %}
+<li class="entry-cell"{% if alias %} data-home-alias="{{ url | escape }}"{% endif %}><a href="{{ url | escape }}" class="finder-file" data-entry{% if alias %} draggable="true"{% endif %}
+    {% if folder %}data-folder="{{ folder | escape }}"{% else %}data-file{% endif %}
+    data-name="{{ name | escape }}" data-kind="{{ kind | escape }}"
+    data-summary="{{ summary | escape }}" data-date="{{ date | escape }}" data-date-label="{{ displayDate | escape }}"
+    data-topic="{{ topic | escape }}"{% if image %} data-picture="{{ image | escape }}"{% endif %}>
+    <span class="entry-art{% if art == 'page' %} art-paper{% endif %}" aria-hidden="true">
+      {% if art == "page" %}
+      <span class="file-paper"><b>{{ name | escape }}</b>
+        {% if image %}<img class="paper-picture" src="{{ image | escape }}" alt="" decoding="async">{% endif %}
+        <span class="paper-type">{{ summary | escape }} {{ excerpt | escape }}</span>
+      </span>
+      {% else %}<img src="/assets/media/mac/{{ art }}.png" width="80" height="80" alt="" draggable="false">{% endif %}
+      {% if alias %}<img class="alias-turn" src="/assets/media/mac/alias.png" width="15" height="15" alt="">{% endif %}
+    </span>
+    <span class="entry-name">{{ name | escape }}</span>
+    {% if alias %}<span class="visually-hidden">별칭</span>{% endif %}
+    <span class="entry-date">{{ displayDate | escape }}</span>
+    <span class="entry-kind">{{ kind | escape }}</span>
+    {% if folder %}<span class="entry-next" aria-hidden="true">{{ icon("next",12) }}</span>{% endif %}
+</a></li>
+{% endmacro %}
+
+{% macro folderEntry(section) %}
+{{ tile("/" + section.id + "/",section.label,"폴더","folder", section.description,section.id) }}
+{% endmacro %}
+
+{% macro recordEntry(record, alias=false) %}
+{% set copy = record.templateContent | previewParagraph | striptags | trim | truncate(240,true,"…") %}
+{{ tile(record.url,record.data.title,"Markdown 문서","page",record.data.description,"",
+  record.date | isoDay,record.date | displayDay,record.data.image or "",copy,alias,record.data.topic) }}
+{% endmacro %}
+
+{% macro listHead() %}
+<div class="finder-list-head" aria-hidden="true"><span>이름</span><span>날짜</span><span>종류</span></div>
+{% endmacro %}
+
+{% macro location(url,id,label,symbol) %}
+<a class="location" href="{{ url }}" data-folder="{{ id }}">{{ icon(symbol,17) }}<span>{{ label | escape }}</span></a>
+{% endmacro %}

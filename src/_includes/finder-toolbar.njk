@@ -1,0 +1,48 @@
+{% from "os-icons.njk" import icon %}
+<div class="window-bar" data-titlebar>
+  <div class="traffic enhance" role="group" aria-label="창 제어">
+    <button type="button" class="traffic-close" data-win="close" aria-label="창 닫기" title="닫기"><i></i></button>
+    <button type="button" class="traffic-min" data-win="minimize" aria-label="창 최소화" title="최소화"><i></i></button>
+    <button type="button" class="traffic-zoom" data-win="zoom" aria-label="창 확대" aria-pressed="false" title="확대"><i></i></button>
+  </div>
+  <div class="window-tools">
+    <div class="tool-leading">
+      {% if home %}
+      <button type="button" class="tool-button tool-sidebar enhance" data-sidebar-toggle aria-controls="finder-locations" aria-expanded="false" aria-label="사이드바 보기" title="사이드바">{{ icon("sidebar",18) }}</button>
+      <button type="button" class="tool-button mobile-parent enhance" data-parent aria-label="상위 폴더로" title="상위 폴더로">{{ icon("back",16) }}</button>
+      <div class="history-tools enhance" role="group" aria-label="탐색 기록">
+        <button type="button" class="tool-button" data-back disabled aria-label="뒤로" title="뒤로">{{ icon("back",17) }}</button>
+        <button type="button" class="tool-button" data-forward disabled aria-label="앞으로" title="앞으로">{{ icon("next",17) }}</button>
+      </div>
+      <strong class="window-title" data-window-title>RatelXD</strong>
+      {% else %}
+      <a class="tool-button back-folder" href="/{% if section %}?folder={{ section }}{% endif %}" aria-label="Finder로 돌아가기" title="Finder로 돌아가기">{{ icon("back",17) }}</a>
+      <strong class="window-title" data-window-title>{{ title | escape }}</strong>
+      {% endif %}
+    </div>
+    <div class="tool-trailing">
+      {% if home %}
+      {% set views = [["grid","아이콘"],["list","목록"],["columns","계층"],["gallery","갤러리"]] %}
+      <div class="view-tools enhance" role="group" aria-label="Finder 보기 방식">
+        {% for kind, name in views %}
+        <button type="button" class="tool-button" data-layout="{{ kind }}" aria-pressed="{{ 'true' if kind == 'grid' else 'false' }}" aria-label="{{ name }} 보기" title="{{ name }} 보기">{{ icon(kind,17) }}</button>
+        {% endfor %}
+      </div>
+      <details class="tool-popover compact-views enhance">
+        <summary class="tool-button" aria-label="보기 방식 선택" title="보기 방식 선택"><span data-view-symbol>{{ icon("grid",17) }}</span>{{ icon("down",9) }}</summary>
+        <div class="tool-sheet">{% for kind, name in views %}<button type="button" data-layout="{{ kind }}" aria-pressed="{{ 'true' if kind == 'grid' else 'false' }}">{{ icon(kind,16) }} {{ name }} 보기</button>{% endfor %}</div>
+      </details>
+      <details class="tool-popover sorting enhance"><summary class="tool-button" aria-label="정렬 방식" title="정렬 방식">{{ icon("sort",18) }}{{ icon("down",9) }}</summary>
+        <div class="tool-sheet"><span class="sheet-label">정렬 기준</span><button type="button" data-sort="name">이름</button><button type="button" data-sort="date">날짜</button></div>
+      </details>
+      {% endif %}
+      <details class="tool-popover sharing enhance"><summary class="tool-button" aria-label="공유" title="공유">{{ icon("share",18) }}</summary>
+        <div class="tool-sheet"><button type="button" data-copy-location>{{ icon("link",15) }} 링크 복사</button></div>
+      </details>
+      {% if home %}
+      <button type="button" class="tool-button info-tool enhance" data-finder-info aria-label="정보 가져오기" title="정보 가져오기">{{ icon("info",18) }}</button>
+      <button type="button" class="tool-button tool-search enhance" data-spotlight aria-label="Spotlight 검색" title="Spotlight 검색">{{ icon("search",18) }}</button>
+      {% else %}<a class="tool-button tool-search" href="/?search=1" aria-label="Spotlight 검색" title="Spotlight 검색">{{ icon("search",18) }}</a>{% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+{% from "os-icons.njk" import icon, appImage %}
+<div class="dock-area">
+  <nav class="dock" aria-label="Dock">
+    {% set apps = [
+      {id:"finder", label:"Finder", url:"/", current:home},
+      {id:"browser", label:"GitHub", url:site.github},
+      {id:"notes", label:"학습 노트", url:"/notes/", current:page.url == "/notes/"},
+      {id:"preview", label:"프로젝트", url:"/projects/", current:page.url == "/projects/"},
+      {id:"contacts", label:"RatelXD 소개", url:"/about/", current:profile},
+      {id:"lab", label:"패킷 실습실", url:"/lab/", current:lab}
+    ] %}
+    {% for app in apps %}
+    <a class="dock-app{% if app.current or app.id == 'finder' or (app.id == 'preview' and section and not archive) %} running{% endif %}" href="{{ app.url }}" aria-label="{{ app.label }}"
+       {% if home and app.id == "finder" %}data-launch-finder{% elif app.current %}data-current-app{% endif %}>
+      {{ appImage(app.id, 64) }}<span class="dock-label" aria-hidden="true">{{ app.label }}</span>
+    </a>
+    {% endfor %}
+    <span class="dock-divider" aria-hidden="true"></span>
+    <details class="dock-stack">
+      <summary class="dock-app" aria-label="최근 문서">{{ appImage("stack",64) }}<span class="dock-label" aria-hidden="true">최근 문서</span></summary>
+      <div class="stack-sheet"><strong>최근 문서</strong><ul>{% for file in collections.recentFiles %}<li><a href="{{ file.url }}">{{ appImage("document", 23) }}<span>{{ file.data.title | escape }}</span></a></li>{% endfor %}</ul><a class="stack-all" href="/?folder=recent"{% if home %} data-folder="recent"{% endif %}>Finder에서 열기</a></div>
+    </details>
+    <button type="button" class="dock-app enhance" data-open-trash aria-label="휴지통"><img data-trash-icon src="/assets/media/mac/trash.png" width="64" height="64" alt="" draggable="false"><span class="dock-label" aria-hidden="true">휴지통</span></button>
+  </nav>
+</div>
+<dialog class="trash-dialog" id="portfolio-trash" aria-labelledby="trash-title">
+  <header><button type="button" class="dialog-close" data-close-trash aria-label="휴지통 닫기">{{ icon("close",12) }}</button><h2 id="trash-title">휴지통</h2></header>
+  <div class="trash-empty" data-trash-empty>{{ appImage("trash", 70) }}<p>휴지통이 비어 있습니다.</p></div>
+  <div class="trash-files" data-trash-files hidden>
+    {% for file in collections.pinnedFiles %}<div class="trash-file" data-bin-url="{{ file.url }}" hidden>{{ appImage("document",28) }}<span>{{ file.data.title | escape }} <small>별칭</small></span><button type="button" data-untrash>되돌려 놓기</button></div>{% endfor %}
+  </div>
+  <footer><span data-bin-count>0개의 항목</span><button type="button" data-restore-all hidden>모두 되돌려 놓기</button></footer>
+</dialog>
+<p class="desk-notice" role="status" aria-live="polite" data-desk-notice></p>

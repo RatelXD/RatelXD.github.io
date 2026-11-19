@@ -4,11 +4,11 @@
   "github": "https://github.com/RatelXD",
   "pinned": ["/projects/discord-ctf/", "/notes/routes/", "/activities/honam-hackathon/"],
   "wallpaper": {
-    "title": "지리산",
-    "author": "eimoberg",
-    "creditUrl": "https://commons.wikimedia.org/wiki/File:Korea-Mountain-Jirisan-01.jpg",
-    "license": "CC BY 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/2.0/"
+    "title": "WhiteSur (morning)",
+    "author": "Vince",
+    "creditUrl": "https://github.com/vinceliuice/WhiteSur-wallpapers/blob/5c1d7ca20b8de0a7efe443792c19e49277262e02/src/WhiteSur-morning.svg",
+    "license": "MIT 라이선스",
+    "licenseUrl": "/assets/licenses/Sur-wallpaper.txt"
   },
   "description": "정보보안학과 RatelXD의 클라우드 보안 학습 노트, 프로젝트와 대외활동 기록.",
   "sections": [

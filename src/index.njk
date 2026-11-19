@@ -2,44 +2,85 @@
 layout: base.njk
 title: RatelXD의 작업실
 ---
-{% from "os-icons.njk" import icon, folder, fileRow %}
-<div class="finder">
-  <aside class="locations" aria-label="탐색기 사이드바">
-    <a href="/about/" class="account"><img src="/assets/media/profile.webp" width="38" height="38" alt=""><span><strong>RatelXD</strong><small>정보보안학과</small></span></a>
-    <nav class="folder-nav" aria-label="폴더 탐색">
-      <a class="location chosen" href="/" data-folder="home">{{ icon("desktop") }}<span>내 작업실</span></a>
-      {% for item in site.sections %}
-      <a class="location" href="/{{ item.id }}/" data-folder="{{ item.id }}">{{ icon(item.id) }}<span>{{ item.label }}</span></a>
-      {% endfor %}
-    </nav>
-    <nav class="utilities" aria-label="작업 도구"><a class="location" href="/lab/">{{ icon("lab") }}<span>패킷 실습실</span></a><a class="location" href="{{ site.github }}">{{ icon("github") }}<span>GitHub</span></a></nav>
-  </aside>
-  <div class="file-area" id="files">
-    <section class="folder-panel" data-panel="home" data-count="{{ collections.pinnedFiles.length }}" aria-labelledby="workspace-title">
-      <h1 id="workspace-title" tabindex="-1">RatelXD의 작업실</h1>
-      <p class="finder-intro">클라우드 보안을 공부하며 만든 도구와 실습 기록을 모았습니다.</p>
-      <nav class="folder-shelf" aria-label="작업실 폴더">
-        {% for id in ["projects","notes","activities"] %}{% set item = id | sectionById %}
-        <a href="/{{ id }}/" class="shelf-item" data-folder="{{ id }}">{{ folder(id,id) }}<span>{{ item.label }}</span><small>{{ collections[id].length }}개 항목</small></a>
-        {% endfor %}
-      </nav>
-      <div class="file-heading"><h2>{{ icon("pin",17) }} 고정한 파일</h2></div>
-      <ul class="file-list">{% for entry in collections.pinnedFiles %}{{ fileRow(entry) }}{% endfor %}</ul>
+{% from "os-icons.njk" import icon %}
+{% from "finder-files.njk" import tile, folderEntry, recordEntry, listHead, location %}
+{% set roots = ["projects","notes","activities"] %}
+<aside class="locations" id="finder-locations" aria-label="Finder 사이드바">
+  <nav class="locations-group" aria-labelledby="finder-favorites">
+    <h2 id="finder-favorites">즐겨찾기</h2>
+    {{ location("/notes/","recent","최근 항목","clock") }}
+    {% for id in roots %}{% set folder = id | sectionById %}
+      {{ location("/" + id + "/",id,folder.label,"folder" if id == "projects" else ("document" if id == "notes" else "activities")) }}
+    {% endfor %}
+  </nav>
+  <nav class="locations-group" aria-labelledby="finder-devices">
+    <h2 id="finder-devices">위치</h2>
+    {{ location("/","home",site.name,"home") }}
+  </nav>
+  <nav class="locations-group" aria-labelledby="finder-shortcuts">
+    <h2 id="finder-shortcuts">바로가기</h2>
+    <a class="location" href="/lab/">{{ icon("lab",17) }}<span>패킷 실습실</span></a>
+    <a class="location" href="/about/">{{ icon("person",17) }}<span>클라우드 보안 프로필</span></a>
+    <a class="location" href="{{ site.github }}">{{ icon("github",17) }}<span>GitHub</span></a>
+  </nav>
+</aside>
+
+<div class="file-area" id="files" data-view="grid">
+  <nav class="column-parents" aria-label="상위 폴더">
+    <a href="/" data-folder="home">{{ icon("home",16) }}<span>RatelXD</span>{{ icon("next",11) }}</a>
+    {% for id in roots %}{% set folder = id | sectionById %}
+    <a href="/{{ id }}/" data-folder="{{ id }}"><img src="/assets/media/mac/folder.png" alt="" width="17" height="17"><span>{{ folder.label | escape }}</span>{{ icon("next",11) }}</a>
+    {% endfor %}
+  </nav>
+  <div class="file-canvas">
+    <div class="gallery-stage" aria-hidden="true" data-gallery-stage></div>
+    <section class="file-panel" data-panel="home" data-title="RatelXD" data-description="{{ site.description | escape }}" aria-labelledby="workspace-heading">
+      <h1 class="visually-hidden" id="workspace-heading" tabindex="-1">RatelXD의 작업실</h1>
+      {{ listHead() }}
+      <ul class="entry-list" aria-label="RatelXD 폴더의 항목">
+        {% for id in roots %}{{ folderEntry(id | sectionById) }}{% endfor %}
+        {{ tile("/lab/","패킷 실습실","응용 프로그램","lab","목적지 IPv4 주소를 바꿔 라우팅 테이블에서 선택되는 경로를 확인합니다.") }}
+        {{ tile("/about/","클라우드 보안 프로필","프로필","contacts","정보보안학과에서 클라우드 보안을 공부하는 RatelXD의 관심 분야와 공개 작업입니다.") }}
+        {% for entry in collections.pinnedFiles %}{{ recordEntry(entry,true) }}{% endfor %}
+      </ul>
     </section>
-    {% for item in site.sections %}
-    <section class="folder-panel" data-panel="{{ item.id }}" data-count="{{ collections[item.id].length }}" aria-labelledby="heading-{{ item.id }}" hidden>
-      <div class="folder-top">
-        <h1 id="heading-{{ item.id }}" tabindex="-1">{{ item.label }}</h1>
-        <div class="view-mode enhance" role="group" aria-label="파일 보기 방식">
-          <button type="button" data-layout="list" aria-label="목록 보기" aria-pressed="true" title="목록 보기">{{ icon("list",17) }}</button>
-          <button type="button" data-layout="grid" aria-label="아이콘 보기" aria-pressed="false" title="아이콘 보기">{{ icon("grid",16) }}</button>
-        </div>
-      </div>
-      <p class="finder-intro">{{ item.description }}</p>
-      <ul class="file-list collection-files">{% for entry in collections[item.id] %}{{ fileRow(entry) }}{% endfor %}</ul>
-      <a class="archive-shortcut" href="/{{ item.id }}/">{{ item.label }} 목록 페이지 열기</a>
+    {% for section in site.sections %}
+    <section class="file-panel" data-panel="{{ section.id }}" data-title="{{ section.label | escape }}" data-description="{{ section.description | escape }}" aria-labelledby="heading-{{ section.id }}" hidden>
+      <h1 class="visually-hidden" id="heading-{{ section.id }}" tabindex="-1">{{ section.label | escape }}</h1>
+      {{ listHead() }}
+      <ul class="entry-list" aria-label="{{ section.label | escape }} 폴더의 항목">
+        {% for entry in collections[section.id] %}{{ recordEntry(entry) }}{% endfor %}
+      </ul>
     </section>
     {% endfor %}
+    <section class="file-panel" data-panel="recent" data-title="최근 항목" data-description="공개 기록을 날짜순으로 모은 폴더입니다." aria-labelledby="heading-recent" hidden>
+      <h1 class="visually-hidden" id="heading-recent" tabindex="-1">최근 항목</h1>
+      {{ listHead() }}
+      <ul class="entry-list" aria-label="최근 항목">{% for entry in collections.recentFiles %}{{ recordEntry(entry) }}{% endfor %}</ul>
+    </section>
+  </div>
+  <aside class="finder-inspector" aria-label="선택 항목 미리보기">
+    <div class="inspect-art" data-inspect-art aria-hidden="true"></div>
+    <div class="inspect-copy"><strong data-inspect-title></strong><span data-inspect-kind></span></div>
+    <dl data-inspect-details></dl>
+    <div class="child-files" data-child-files></div>
+    <button type="button" class="inspect-open" data-inspect-open>열기</button>
+  </aside>
+  <dialog class="finder-info" aria-labelledby="info-title">
+    <div class="info-bar"><h2 id="info-title"></h2><button type="button" data-info-close aria-label="정보 창 닫기">닫기</button></div>
+    <div class="info-summary"><div data-info-art aria-hidden="true"></div><div><strong data-info-name></strong><small data-info-kind></small></div></div>
+    <dl class="info-details" data-info-details></dl>
+  </dialog>
+  <div class="file-menu" popover="manual" role="menu" aria-label="항목 동작">
+    <button type="button" role="menuitem" data-item-action="open">열기</button>
+    <button type="button" role="menuitem" data-item-action="preview">훑어보기</button>
+    <button type="button" role="menuitem" data-item-action="info">정보 가져오기</button>
+    <hr>
+    <button type="button" role="menuitem" data-item-action="copy">링크 복사</button>
+    <button type="button" role="menuitem" data-item-action="trash" hidden>휴지통으로 이동</button>
   </div>
 </div>
-<div class="finder-status"><span>{{ icon("folder",15) }}<span data-status-path>내 작업실</span></span><span class="status-tip enhance"><kbd>Space</kbd><span class="touch-eye">{{ icon("eye",14) }} 눈 아이콘으로</span> 미리보기</span></div>
+<div class="finder-status">
+  <nav aria-label="현재 파일 경로"><a href="/" data-folder="home">{{ icon("home",13) }}<span>RatelXD</span></a><span data-status-path></span></nav>
+  <span role="status" data-item-count>RatelXD</span>
+</div>
