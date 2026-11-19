@@ -1,0 +1,21 @@
+<figure class="subnet">
+  <figcaption><span>IPv4 서브넷</span><span class="network-id">10.24.0.0/24</span></figcaption>
+  <fieldset class="subnet-tool">
+    <legend class="visually-hidden">비교할 서브넷 접두사 길이</legend>
+    <div class="prefix-picker">
+      <span aria-hidden="true">접두사 길이</span>
+      {% for bits in [24, 25, 26] %}
+      <label><input type="radio" name="prefix" value="{{ bits }}"{% if bits == 26 %} checked{% endif %}><span>/{{ bits }}</span></label>
+      {% endfor %}
+    </div>
+    {% for bits, size, last in [[24,256,255],[25,128,127],[26,64,63]] %}
+    <div class="subnet-state prefix-{{ bits }}">
+      <div class="address-plate">
+        <img src="{{ ('/assets/media/subnet-' + bits + '.png') | assetPath(page.url) }}" width="1040" height="570" alt="256칸 중 첫 {{ size }}칸을 붉은색으로 표시한 주소 배치도">
+        <span class="endpoint start" aria-hidden="true">10.24.0.0</span><span class="endpoint end" aria-hidden="true">10.24.0.255</span>
+      </div>
+      <p class="range"><strong>{{ size }}개 주소</strong><span>10.24.0.0 ~ 10.24.0.{{ last }}</span></p>
+    </div>
+    {% endfor %}
+  </fieldset>
+</figure>

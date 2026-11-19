@@ -1,0 +1,5 @@
+node_modules/
+_site/
+.hallmark/
+.cache/
+.DS_Store

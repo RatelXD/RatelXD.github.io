@@ -1,0 +1,59 @@
+---
+layout: base.njk
+---
+{% set category = section | sectionById %}
+{% set records = collections[section] %}
+<div class="container archive-page" data-archive>
+  <header class="archive-heading">
+    <h1>{{ category.label | escape }}</h1>
+    <p>{{ category.description | escape }}</p>
+  </header>
+  {% if section == "notes" and records.length %}
+  <form class="archive-search" role="search" data-note-search hidden>
+    <div class="search-field">
+      <label for="note-query">노트 검색</label>
+      <input id="note-query" name="q" type="search" placeholder="제목, 주제, 내용 요약" autocomplete="off">
+    </div>
+    {% set topicOptions = records | topics %}
+    {% if topicOptions.length > 1 %}
+    <div class="topic-field">
+      <label for="note-topic">주제</label>
+      <select id="note-topic" name="topic">
+        <option value="">모든 주제</option>
+        {% for option in topicOptions %}<option value="{{ option | escape }}">{{ option | escape }}</option>{% endfor %}
+      </select>
+    </div>
+    {% endif %}
+  </form>
+  {% endif %}
+  <p class="record-total" role="status" aria-live="polite" aria-atomic="true" data-total>전체 {{ records.length }}편</p>
+  <ol class="record-list">
+    {% for record in records %}
+    <li class="record" data-record data-topic="{{ record.data.topic | default('') | escape }}">
+      <a class="record-link{% if record.data.image %} illustrated{% endif %}" href="{{ record.url }}">
+        <div class="record-date">
+          <time datetime="{{ record.date | isoDay }}">{{ record.date | displayDay }}</time>
+          {% if record.data.dateLabel %}<span>{{ record.data.dateLabel | escape }}</span>{% endif %}
+        </div>
+        <div class="record-main">
+          {% if record.data.topic %}<span class="record-topic">{{ record.data.topic | escape }}</span>{% endif %}
+          <h2>{{ record.data.title | escape }}</h2>
+          <p>{{ record.data.description | escape }}</p>
+        </div>
+        {% if record.data.image %}
+        <div class="record-image">
+          <img src="{{ record.data.image | escape }}" alt="" width="{{ record.data.imageWidth | default(320) }}" height="{{ record.data.imageHeight | default(180) }}" loading="lazy" decoding="async">
+        </div>
+        {% endif %}
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+  {% if not records.length %}<p class="archive-empty">아직 공개된 {{ category.label | escape }} 글이 없습니다.</p>{% endif %}
+  {% if section == "notes" and records.length %}
+  <div class="archive-empty" data-no-results hidden>
+    <p>검색 조건에 맞는 노트가 없습니다.</p>
+    <button type="button" class="reader-action" data-reset-search>전체 노트 보기</button>
+  </div>
+  {% endif %}
+</div>

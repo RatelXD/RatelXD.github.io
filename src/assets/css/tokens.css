@@ -1,0 +1,28 @@
+:root {
+  color-scheme: light;
+  --color-paper: #faf9f6;
+  --color-paper-2: #f0efe9;
+  --color-paper-3: #e6e4dc;
+  --color-ink: #1b1d19;
+  --color-ink-2: #393c35;
+  --color-muted: #585c53;
+  --color-rule: #ccccc2;
+  --color-rule-2: #a9aca2;
+  --color-accent: #a53222;
+  --color-focus: #923020;
+  --color-accent-ink: #fffaf4;
+  --color-print-dark: #161817;
+  --color-print-red: #e43c20;
+  --font-display: "Nanum Myeongjo", Georgia, serif;
+  --font-body: "Pretendard", system-ui, sans-serif;
+  --font-outlier: ui-monospace, monospace;
+  --font-mast: "Instrument Serif", Georgia, serif;
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px;
+  --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px;
+  --container: 1400px;
+  --gutter: clamp(1.25rem, 5.4vw, 5rem);
+  --gap-columns: clamp(1.75rem, 3.8vw, 3.8rem);
+  --mobile-nav-gap: clamp(.55rem, 3.5vw, 1.5rem);
+  --space-page: clamp(3rem, 7vw, 6rem);
+  --text-md: 1rem; --text-sm: .875rem;
+}

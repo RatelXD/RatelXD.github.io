@@ -1,0 +1,12 @@
+{
+  "name": "ratelxd-field-notes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "eleventy",
+    "dev": "eleventy --serve"
+  },
+  "engines": { "node": ">=22" },
+  "devDependencies": { "@11ty/eleventy": "3.1.8" }
+}

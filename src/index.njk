@@ -1,0 +1,52 @@
+---
+layout: base.njk
+title: 클라우드 보안 기록
+---
+{% set cover = collections.notes | matchSlug(site.coverSlug) or collections.notes[0] %}
+{# Separate the blue cable jackets from the neutral chassis into two printing inks. #}
+<svg aria-hidden="true" focusable="false" class="ink-separation" xmlns="http://www.w3.org/2000/svg"><defs>
+  <filter id="spot-ink" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="-1.43 .92 1.83 0 -.09   1.12 .76 -.65 0 -.10   1.20 .72 -.70 0 -.12   0 0 0 1 0"/>
+  </filter>
+</defs></svg>
+<div class="container">
+  <div class="front-spread">
+    {% if cover %}<article class="cover-story" aria-labelledby="cover-title">
+      <div class="cover-metadata">
+        <a class="section-ref" href="/notes/">학습 노트</a>
+        <time datetime="{{ cover.date | isoDay }}">{{ cover.date | displayDay }}</time>
+      </div>
+      <div class="photo-print">
+        <input type="checkbox" class="plate-toggle" id="original-color" aria-label="표지 사진 원래 색상 보기">
+        <a class="image-link" href="{{ cover.url }}" aria-labelledby="cover-title">
+          <img src="assets/media/network-switches.webp" srcset="assets/media/network-switches-small.webp 640w, assets/media/network-switches.webp 1280w" sizes="(max-width: 48rem) 94vw, 60vw" width="1280" height="851" alt="네트워크 스위치의 포트에 연결된 이더넷 케이블" fetchpriority="high">
+        </a>
+        <label class="plate-control" for="original-color"><span class="split-disc" aria-hidden="true"></span><span class="show-original">원본 색상</span><span class="show-print">인쇄 색상</span></label>
+      </div>
+      <h2 id="cover-title"><a href="{{ cover.url }}">{{ cover.data.title }}</a></h2>
+      <p class="cover-deck">{{ cover.data.description }}</p>
+    </article>{% endif %}
+    <section class="other-notes" aria-labelledby="note-head">
+      <div class="folio-heading"><h2 id="note-head">노트 색인</h2><a class="small-link" href="/notes/">전체 보기</a></div>
+      <ol class="story-list">
+        {% for entry in collections.notes | omitSlug(cover.fileSlug) | firstItems(3) %}
+        <li><a class="story-entry" href="{{ entry.url }}"><span class="topic">{{ entry.data.topic }}</span><h3>{{ entry.data.title }}</h3><p>{{ entry.data.description }}</p></a></li>
+        {% endfor %}
+      </ol>
+    </section>
+  </div>
+  <section class="works-index" aria-labelledby="work-head">
+    <div class="section-mast"><h2 id="work-head">프로젝트</h2><a class="small-link" href="/projects/">전체 프로젝트</a></div>
+    <div class="work-entries">
+      {% for entry in collections.projects | firstItems(2) %}
+      <article><a class="work-entry" href="{{ entry.url }}"><h3>{{ entry.data.title }}</h3><p class="deck">{{ entry.data.description }}</p></a></article>
+      {% endfor %}
+    </div>
+  </section>
+  <section class="activity-index" aria-labelledby="activity-head">
+    <div class="section-mast"><h2 id="activity-head">대외활동</h2><a class="small-link" href="/activities/">활동 목록</a></div>
+    {% for entry in collections.activities | firstItems(2) %}
+    <a class="activity-entry" href="{{ entry.url }}"><time datetime="{{ entry.date | isoDay }}">{{ entry.date | displayDay }}</time><h3>{{ entry.data.title }}</h3><p>{{ entry.data.description }}</p></a>
+    {% endfor %}
+  </section>
+</div>
