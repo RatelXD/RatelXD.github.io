@@ -7,12 +7,8 @@
 {% macro place(label, address, folder="") %}
 <a class="mac-item" href="{{ address }}"{% if folder %} data-folder="{{ folder }}"{% endif %}><span class="item-check" aria-hidden="true"></span><span>{{ label }}</span></a>
 {% endmacro %}
-{% macro spot(home) %}
-{% if home %}
+{% macro spot() %}
 <button type="button" class="mac-item mac-js" data-menu-command="spotlight"><span class="item-check" aria-hidden="true"></span><span>Spotlight 검색</span><kbd aria-hidden="true">⌘K</kbd></button>
-{% else %}
-<a class="mac-item" href="/?search=1"><span class="item-check" aria-hidden="true"></span><span>Spotlight 검색</span><kbd aria-hidden="true">⌘K</kbd></a>
-{% endif %}
 {% endmacro %}
 <header class="system-bar" aria-label="메뉴 막대">
   <nav class="mac-app-menus" aria-label="응용 프로그램 메뉴">
@@ -21,8 +17,8 @@
       <div class="mac-sheet" aria-label="Apple 메뉴 항목">
         {{ place("이 작업실에 관하여", "/about/") }}
         <hr>
-        {{ place("RatelXD 홈", "/", "home" if home else "") }}
-        {{ place("GitHub 프로필", site.github) }}
+        {{ place("RatelXD 홈", "/", "home") }}
+        <a class="mac-item" href="{{ site.github }}" target="_blank" rel="noopener"><span class="item-check" aria-hidden="true"></span><span>GitHub 프로필</span></a>
       </div>
     </details>
     <details class="mac-menu front-menu">
@@ -30,20 +26,20 @@
       <div class="mac-sheet">
         {{ place("RatelXD에 관하여", "/about/") }}
         <hr>
-        {{ place("Finder 열기", "/", "home" if home else "") }}
+        {{ place("Finder 열기", "/", "home") }}
         {{ place("패킷 실습실 열기", "/lab/") }}
       </div>
     </details>
     <details class="mac-menu full-menu">
       <summary>파일</summary>
       <div class="mac-sheet">
-        {% if home %}
+        <div data-finder-menu{% if not home %} hidden{% endif %}>
         {{ command("열기", "open", "⌘O", "selection") }}
         {{ command("훑어보기", "preview", "Space", "preview") }}
         {{ command("정보 가져오기", "info", "⌘I") }}
-        <button class="mac-item" type="button" data-menu-command="trash" hidden><span class="item-check" aria-hidden="true"></span><span>별칭을 휴지통으로 이동</span><kbd aria-hidden="true">⌘⌫</kbd></button>
-        {% else %}{{ place("Finder에서 보기", "/?folder=" + section if section else "/") }}{% endif %}
-        {{ place("학습 노트 열기", "/notes/", "notes" if home else "") }}
+        </div>
+        <div data-reader-menu{% if home %} hidden{% endif %}><a class="mac-item" data-enclosing-folder href="/{% if section %}?folder={{ section }}{% endif %}"><span class="item-check" aria-hidden="true"></span><span>Finder에서 보기</span></a></div>
+        {{ place("학습 노트 열기", "/notes/", "notes") }}
         <hr class="mac-js">
         {{ command("창 닫기", "window-close", "", "window") }}
       </div>
@@ -51,16 +47,16 @@
     <details class="mac-menu full-menu">
       <summary>편집</summary>
       <div class="mac-sheet">
-        {% if home %}{{ command("선택한 항목의 링크 복사", "copy", "⌘C", "selection") }}{% endif %}
+        <div data-finder-menu{% if not home %} hidden{% endif %}>{{ command("선택한 항목의 링크 복사", "copy", "⌘C", "selection") }}</div>
         {{ command("현재 페이지 링크 복사", "copy-page") }}
-        {{ spot(home) }}
+        {{ spot() }}
         <a class="mac-item no-mac-js" href="/notes/"><span class="item-check" aria-hidden="true"></span><span>학습 노트 찾기</span></a>
       </div>
     </details>
     <details class="mac-menu view-menu">
       <summary>보기</summary>
       <div class="mac-sheet">
-        {% if home %}
+        <div data-finder-menu{% if not home %} hidden{% endif %}>
         {{ command("아이콘", "view-grid", "⌘1", "", "grid") }}
         {{ command("목록", "view-list", "⌘2", "", "list") }}
         {{ command("계층", "view-columns", "⌘3", "", "columns") }}
@@ -68,10 +64,11 @@
         <hr class="mac-js">
         {{ command("이름순 정렬", "sort-name", "", "", "name") }}
         {{ command("날짜순 정렬", "sort-date", "", "", "date") }}
-        {% else %}
+        </div>
+        <div data-reader-menu{% if home %} hidden{% endif %}>
         {{ command("문서 처음으로", "reader-start", "", "window") }}
         {{ command("문서 끝으로", "reader-end", "", "window") }}
-        {% endif %}
+        </div>
         <hr class="mac-js">
         {{ command("창 확대/축소", "window-zoom", "", "window") }}
         <a class="mac-item no-mac-js" href="/projects/"><span class="item-check" aria-hidden="true"></span><span>프로젝트 목록</span></a>
@@ -80,40 +77,40 @@
     <details class="mac-menu go-menu">
       <summary>이동</summary>
       <div class="mac-sheet">
-        {% if home %}
+        <div data-finder-menu{% if not home %} hidden{% endif %}>
         {{ command("뒤로", "back", "⌘[", "back") }}
         {{ command("앞으로", "forward", "⌘]", "forward") }}
         {{ command("상위 폴더", "parent", "⌘↑", "parent") }}
         <hr class="mac-js">
-        {% endif %}
-        {{ place("홈", "/", "home" if home else "") }}
-        {{ place("최근 항목", "/?folder=recent", "recent" if home else "") }}
-        {% for item in site.sections %}{{ place(item.label, "/" + item.id + "/", item.id if home else "") }}{% endfor %}
+        </div>
+        {{ place("홈", "/", "home") }}
+        {{ place("최근 항목", "/?folder=recent", "recent") }}
+        {% for item in site.sections %}{{ place(item.label, "/" + item.id + "/", item.id) }}{% endfor %}
         <hr>
         {{ place("패킷 실습실", "/lab/") }}
         {{ place("프로필", "/about/") }}
       </div>
     </details>
-    <details class="mac-menu full-menu">
+    <details class="mac-menu window-menu">
       <summary>윈도우</summary>
       <div class="mac-sheet">
         {{ command("최소화", "window-minimize", "", "window") }}
         {{ command("확대/축소", "window-zoom", "", "window") }}
         <hr class="mac-js">
-        {{ command("현재 창 앞으로 가져오기", "window-show") }}
+        <div data-window-list></div>
         <a class="mac-item no-mac-js" href="/"><span class="item-check" aria-hidden="true"></span><span>Finder 열기</span></a>
       </div>
     </details>
     <details class="mac-menu full-menu">
       <summary>도움말</summary>
       <div class="mac-sheet help-menu-panel">
-        {{ spot(home) }}
+        {{ spot() }}
         {{ place("작업실 소개", "/about/") }}
-        {% if home %}
+        <div data-finder-menu{% if not home %} hidden{% endif %}>
         <hr>
         <p data-finder-help>항목을 두 번 클릭하면 열립니다. 선택한 파일은 스페이스 바로 훑어볼 수 있습니다.</p>
         <p data-modifier-help hidden>이 기기에서는 ⌘ 대신 Ctrl 키를 사용하세요.</p>
-        {% endif %}
+        </div>
       </div>
     </details>
   </nav>
@@ -126,11 +123,7 @@
       <summary aria-label="네트워크 상태" title="네트워크 상태">{{ icon("wifi",18) }}</summary>
       <div class="mac-sheet status-sheet"><strong>네트워크</strong><p data-network-state></p></div>
     </details>
-    {% if home %}
     <button type="button" class="status-search mac-js" data-spotlight aria-label="Spotlight 검색" title="Spotlight 검색">{{ icon("search",16) }}</button>
-    {% else %}
-    <a class="status-search" href="/?search=1" aria-label="Spotlight 검색" title="Spotlight 검색">{{ icon("search",16) }}</a>
-    {% endif %}
     <details class="mac-menu status-menu center-menu mac-js">
       <summary aria-label="제어 센터" title="제어 센터">{{ icon("control",19) }}</summary>
       <div class="mac-sheet control-sheet">

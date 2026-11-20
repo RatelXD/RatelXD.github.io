@@ -60,7 +60,6 @@
   color: var(--f-ink); cursor: default; user-select: none; -webkit-user-drag: none;
 }
 .finder-file:hover, .finder-file:active { color: var(--f-ink); text-decoration: none; }
-.entry-cell[data-home-alias] > .finder-file { -webkit-user-drag: element; }
 .finder-file:focus-visible { outline-offset: -2px; }
 .entry-name { min-width: 0; font-size: .805rem; line-height: 1.35; letter-spacing: -.01em; text-wrap: pretty; }
 .entry-art {
@@ -229,7 +228,7 @@
 }
 @media (max-width: 42rem) {
   .finder-page .locations { display: none; }
-  .finder-page .sidebar-open .locations {
+  .finder-page.sidebar-open .locations {
     display: block; position: absolute; grid-area: auto; z-index: 5; top: var(--toolbar-h,51px); bottom: 0; left: 0;
     width: min(205px,75%); padding-top: 10px; background: var(--f-paper); box-shadow: 5px 0 14px var(--f-shadow);
   }

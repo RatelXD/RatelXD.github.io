@@ -78,6 +78,7 @@
   function present(dialog, opener, initialFocus) {
     if (document.querySelector("dialog[open]")) return false;
     openers.set(dialog, opener instanceof HTMLElement ? opener : document.activeElement);
+    dialog.returnValue = "";
     dialog.showModal();
     initialFocus.focus({ preventScroll: true });
     return true;
@@ -145,16 +146,10 @@
     });
     dialog.addEventListener("close", () => {
       if (dialog.open) return;
-      if (dialog === search) {
-        const address = new URL(location.href);
-        if (address.searchParams.get("search") === "1") {
-          address.searchParams.delete("search");
-          history.replaceState(history.state, "", address);
-        }
-      }
+      if (dialog === search) document.dispatchEvent(new Event("desk:search-close"));
       const opener = openers.get(dialog);
       openers.delete(dialog);
-      if (document.querySelector("dialog[open]")) return;
+      if (dialog.returnValue === "open-window" || document.querySelector("dialog[open]")) return;
       if (opener?.isConnected && opener.getClientRects().length) opener.focus({ preventScroll: true });
       else {
         const summary = opener?.closest("details")?.querySelector("summary");

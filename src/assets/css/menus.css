@@ -37,6 +37,8 @@
 .system-bar .mac-item { width:100%; display:grid; grid-template-columns:11px minmax(0,1fr) auto; align-items:center; gap:5px; min-height:24px; padding:3px 9px 3px 3px; margin:0; background:transparent; border:0; border-radius:4px; color:var(--menu-ink); font:inherit; white-space:nowrap; text-align:left; text-decoration:none; cursor:default; }
 .mac-item .item-check { text-align:center; font-size:.8rem; font-weight:600; }
 .mac-item[data-checked="true"] .item-check::before { content:"✓"; }
+.window-menu .mac-sheet { max-width:min(340px,calc(100dvi - 12px)); }
+[data-window-list] .mac-item span:last-child { overflow:hidden; text-overflow:ellipsis; }
 .mac-item kbd { justify-self:end; padding-inline-start:18px; color:var(--menu-muted); font:inherit; line-height:1; }
 .system-bar .mac-item:is(:hover,:focus-visible):not(:disabled) { color:var(--menu-selected); background:var(--menu-tint); outline:0; }
 .mac-item:is(:hover,:focus-visible):not(:disabled) kbd { color:var(--menu-selected); }

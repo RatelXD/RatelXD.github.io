@@ -1,21 +1,22 @@
-(() => {
-  const area = document.querySelector("#files");
-  if (!area) return;
-  const win = area.closest("[data-window]");
+function setupFinder(view, openWindow) {
+  const win = view.win;
+  const area = win.querySelector("#files");
+  const lifetime = new AbortController();
+  win.addEventListener("desk:close", () => lifetime.abort(), {once:true});
   const panels = new Map([...area.querySelectorAll("[data-panel]")].map(panel => [panel.dataset.panel,panel]));
   const available = panel => [...panel.querySelectorAll(".entry-cell:not([hidden]) > [data-entry]")];
   const layoutChoices = ["grid","list","columns","gallery"];
   const phone = matchMedia("(max-width: 42rem)");
   const collator = new Intl.Collator("ko", {numeric: true});
-  const status = document.querySelector("[data-item-count]");
+  const status = win.querySelector("[data-item-count]");
   const info = area.querySelector(".finder-info");
   const context = area.querySelector(".file-menu");
-  const navigatorButtons = {back: document.querySelector("[data-back]"), forward: document.querySelector("[data-forward]")};
-  const layoutButtons = [...document.querySelectorAll("button[data-layout]")];
-  const sortButtons = [...document.querySelectorAll("button[data-sort]")];
-  const railToggle = document.querySelector("[data-sidebar-toggle]");
+  const navigatorButtons = {back: win.querySelector("[data-back]"), forward: win.querySelector("[data-forward]")};
+  const layoutButtons = [...win.querySelectorAll("button[data-layout]")];
+  const sortButtons = [...win.querySelectorAll("button[data-sort]")];
+  const railToggle = win.querySelector("[data-sidebar-toggle]");
   const known = id => panels.has(id) ? id : "home";
-  const fromAddress = () => known(new URLSearchParams(location.search).get("folder"));
+  const fromAddress = () => known(view.url.searchParams.get("folder"));
   let folder = fromAddress();
   let selection = null;
   let layout = "grid";
@@ -23,8 +24,8 @@
   let pointer = null;
   let noticeTimer;
   let infoOpener;
-  const historyKey = history.state?.ratelFinder?.key || (Date.now().toString(36) + Math.random().toString(36).slice(2,7));
-  let position = history.state?.ratelFinder?.position || 0;
+  const historyKey = view.initialHistory?.ratelFinder?.key || (Date.now().toString(36) + Math.random().toString(36).slice(2,7));
+  let position = view.initialHistory?.ratelFinder?.position || 0;
   let trail = [folder];
   try {
     const saved = JSON.parse(localStorage.getItem("ratelxd.finder.preferences") || "{}");
@@ -36,29 +37,29 @@
     else position = 0;
   } catch { position = 0; }
 
-  const historyData = () => ({ ...history.state, ratelFinder: {key:historyKey,position} });
-  history.replaceState(historyData(), "");
   function persistTrail() {
+    view.historyData = {ratelFinder:{key:historyKey, position}};
     try { sessionStorage.setItem("ratelxd.trail." + historyKey,JSON.stringify(trail)); } catch { /* History still works in this tab. */ }
   }
   function saveView() {
     try { localStorage.setItem("ratelxd.finder.preferences",JSON.stringify({layout,sort})); } catch { /* Storage is optional. */ }
   }
-  function selectedAlias() { return selection?.closest("[data-home-alias]")?.dataset.homeAlias; }
   function permalink(entry) {
     return entry?.dataset.folder ? "/?folder=" + entry.dataset.folder : entry?.getAttribute("href") || "";
   }
   function syncControls() {
     const state = {
       folder, layout, sort, canBack:position > 0, canForward:position + 1 < trail.length,
-      hasSelection:Boolean(selection), canPreview:Boolean(selection), canTrash:Boolean(selectedAlias()),
+      hasSelection:Boolean(selection), canPreview:Boolean(selection),
       url:permalink(selection), name:selection?.dataset.name || ""
     };
     if (navigatorButtons.back) navigatorButtons.back.disabled = !state.canBack;
     if (navigatorButtons.forward) navigatorButtons.forward.disabled = !state.canForward;
     for (const button of layoutButtons) button.setAttribute("aria-pressed",String(button.dataset.layout === layout));
     for (const button of sortButtons) button.setAttribute("aria-pressed",String(button.dataset.sort === sort));
-    document.dispatchEvent(new CustomEvent("desk:state",{detail:state}));
+    view.finderState = state;
+    win.querySelector("[data-view-symbol] use")?.setAttribute("href", "#symbol-" + layout);
+    win.dispatchEvent(new CustomEvent("desk:state", {bubbles:true, detail:state}));
   }
 
   function refreshStatus() {
@@ -159,9 +160,6 @@
       selection = entry;
       selection?.classList.add("selected");
       selection?.setAttribute("aria-current","true");
-      document.dispatchEvent(new CustomEvent("desk:selection",{detail:{
-        hasSelection:Boolean(entry),url:permalink(entry),name:entry?.dataset.name || "",folder,canTrash:Boolean(selectedAlias())
-      }}));
     }
     if (focus && entry) {
       entry.focus({preventScroll:true});
@@ -170,9 +168,6 @@
     refreshStatus();
     renderPreview();
     syncControls();
-  }
-  function applyTrash() {
-    for (const row of area.querySelectorAll("[data-home-alias]")) row.hidden = Boolean(window.portfolioTrash?.has(row.dataset.homeAlias));
   }
   function orderFiles() {
     if (!sort) return;
@@ -207,15 +202,14 @@
   function display(id, focus=false) {
     context.hidePopover?.();
     folder = known(id);
-    applyTrash();
     const active = panels.get(folder);
     for (const panel of panels.values()) panel.hidden = panel !== active;
-    for (const link of document.querySelectorAll("a[data-folder]:not([data-entry])")) {
+    for (const link of win.querySelectorAll("a[data-folder]:not([data-entry])")) {
       if (link.dataset.folder === folder) link.setAttribute("aria-current","location");
       else link.removeAttribute("aria-current");
     }
-    document.querySelector("[data-window-title]").textContent = active.dataset.title;
-    const path = document.querySelector("[data-status-path]");
+    win.querySelector("[data-window-title]").textContent = active.dataset.title;
+    const path = win.querySelector("[data-status-path]");
     path.textContent = folder === "home" ? "" : "›  " + active.dataset.title;
     active.scrollTop = 0;
     active.scrollLeft = 0;
@@ -223,24 +217,35 @@
     select(layout === "gallery" ? available(active)[0] || null : null);
     if (focus) active.querySelector("h1").focus({preventScroll:true});
   }
-  function visit(id, mode="push", focus=true) {
-    if (!panels.has(id)) return;
-    if (folder !== id) {
-      const url = new URL(location.href);
-      if (id === "home") url.searchParams.delete("folder");
-      else url.searchParams.set("folder",id);
-      if (mode === "replace") trail[position] = id;
-      else { trail = trail.slice(0,position+1); trail.push(id); position++; }
-      history[mode === "replace" ? "replaceState" : "pushState"](historyData(),"",url);
-      persistTrail();
-    }
-    document.dispatchEvent(new Event("desk:show"));
-    display(id,focus);
+  function addToTrail(id) {
+    trail = trail.slice(0, position + 1);
+    trail.push(id);
+    position++;
+  }
+  function showFolder(id, focus = true) {
+    const url = new URL(view.url);
+    url.hash = "";
+    if (id === "home") url.searchParams.delete("folder");
+    else url.searchParams.set("folder", id);
+    persistTrail();
+    view.setUrl(url, "push");
+    display(id, focus);
+  }
+  function visit(id) {
+    if (!panels.has(id) || id === folder) return;
+    addToTrail(id);
+    showFolder(id);
+  }
+  function step(direction) {
+    const next = position + direction;
+    if (next < 0 || next >= trail.length) return;
+    position = next;
+    showFolder(trail[position]);
   }
   function openEntry(entry) {
     if (!entry) return;
     if (entry.dataset.folder) visit(entry.dataset.folder);
-    else location.assign(entry.href);
+    else openWindow(new URL(entry.getAttribute("href"), view.url));
   }
   function showInfo(opener) {
     if (!info.showModal || document.querySelector("dialog[open]")) return;
@@ -279,20 +284,18 @@
   function operate(action, opener) {
     if (action.startsWith("view-")) { setLayout(action.slice(5)); return; }
     if (action.startsWith("sort-")) { setSort(action.slice(5)); return; }
-    if (action === "back" && position > 0) history.back();
-    if (action === "forward" && position + 1 < trail.length) history.forward();
+    if (action === "back") step(-1);
+    if (action === "forward") step(1);
     if (action === "parent" && folder !== "home") visit("home");
     if (action === "open") openEntry(selection);
     if (action === "preview") quickLook();
     if (action === "info") showInfo(opener);
     if (action === "copy") copyLink();
-    if (action === "trash" && selectedAlias()) document.dispatchEvent(new CustomEvent("desk:trash-alias",{detail:{url:selectedAlias()}}));
   }
 
   function showContext(entry,x,y,keyboard=false) {
     if (!context.showPopover) return;
     select(entry);
-    context.querySelector('[data-item-action="trash"]').hidden = !selectedAlias();
     context.showPopover();
     const rect = context.getBoundingClientRect();
     context.style.left = Math.max(4,Math.min(x,innerWidth-rect.width-5)) + "px";
@@ -315,14 +318,14 @@
   });
   document.addEventListener("pointerdown",event=>{
     if (context.hidePopover && context.matches(":popover-open") && !context.contains(event.target)) context.hidePopover();
-  });
+  }, {signal:lifetime.signal});
   area.querySelector("[data-gallery-stage]").addEventListener("dblclick",()=>openEntry(selection));
   area.addEventListener("pointerdown",event => { pointer = {type:event.pointerType,id:event.target.closest("[data-entry]")}; });
   area.addEventListener("focusin",event => {
     const entry = event.target.closest("[data-entry]");
     if (entry && entry !== selection) select(entry);
   });
-  document.addEventListener("click",event => {
+  win.addEventListener("click",event => {
     if (event.defaultPrevented || event.button !== 0 || event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) return;
     const source = event.target;
     if (win.classList.contains("sidebar-open") && !source.closest(".locations,[data-sidebar-toggle]")) sidebar(false);
@@ -359,25 +362,21 @@
   for (const button of layoutButtons) button.addEventListener("click",()=>setLayout(button.dataset.layout));
   for (const button of sortButtons) button.addEventListener("click",()=>setSort(button.dataset.sort));
   railToggle?.addEventListener("click",()=>sidebar(!win.classList.contains("sidebar-open")));
-  phone.addEventListener("change",()=>sidebar(false));
+  phone.addEventListener("change",()=>sidebar(false), {signal:lifetime.signal});
   info.querySelector("[data-info-close]").addEventListener("click",()=>info.close());
   info.addEventListener("close",()=>{ if (infoOpener?.isConnected && infoOpener.getClientRects().length) infoOpener.focus({preventScroll:true}); });
 
-  document.addEventListener("desk:action",event=>{ if (typeof event.detail?.action === "string") operate(event.detail.action,event.detail.opener); });
-  document.addEventListener("desk:reset",()=>visit("home","replace",false));
-  document.addEventListener("desk:home",()=>visit("home"));
-  document.addEventListener("desk:trash-change",()=>{
-    applyTrash();
-    const hidden = selection?.closest("[data-home-alias]")?.hidden;
-    select(hidden ? (layout === "gallery" ? available(panels.get(folder))[0] || null : null) : selection);
-    if (hidden) panels.get(folder).querySelector("h1").focus({preventScroll:true});
+  win.addEventListener("desk:action",event=>{ if (typeof event.detail?.action === "string") operate(event.detail.action,event.detail.opener); });
+  win.addEventListener("desk:route", event => {
+    const next = fromAddress();
+    const saved = event.detail?.state?.ratelFinder;
+    if (saved?.key === historyKey && trail[saved.position] === next) position = saved.position;
+    else if (next !== folder) addToTrail(next);
+    persistTrail();
+    if (next !== folder) display(next);
+    else syncControls();
   });
-  window.addEventListener("popstate",event=>{
-    position = event.state?.ratelFinder?.position || 0;
-    document.dispatchEvent(new Event("desk:show"));
-    display(fromAddress(),true);
-  });
-  document.addEventListener("keydown",event=>{
+  win.addEventListener("keydown",event=>{
     if (event.defaultPrevented || event.isComposing || win.hidden || document.querySelector("dialog[open]") || event.target.closest("input,textarea,select,[contenteditable=true]")) return;
     if (context.hidePopover && context.matches(":popover-open")) {
       if (["Escape","Tab"].includes(event.key)) {
@@ -403,7 +402,7 @@
     const key = event.key;
     const command = event.metaKey || event.ctrlKey;
     if (command) {
-      const action = {o:"open",i:"info",c:"copy",ArrowUp:"parent",ArrowDown:"open","[":"back","]":"forward",Backspace:"trash",Delete:"trash"}[key.length === 1 ? key.toLowerCase() : key];
+      const action = {o:"open",i:"info",c:"copy",ArrowUp:"parent",ArrowDown:"open","[":"back","]":"forward"}[key.length === 1 ? key.toLowerCase() : key];
       if (action && (selection || ["back","forward","info","parent"].includes(action))) { event.preventDefault(); operate(action); }
       else if (/^[1-4]$/.test(key)) { event.preventDefault(); setLayout(layoutChoices[Number(key)-1]); }
       return;
@@ -428,4 +427,4 @@
   area.dataset.view = layout;
   persistTrail();
   display(folder);
-})();
+}

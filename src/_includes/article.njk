@@ -51,8 +51,8 @@ layout: base.njk
   </div>
 </article>
 {% if '<img' in content %}
-<dialog class="reader-image-dialog" aria-labelledby="image-dialog-title" data-image-dialog>
-  <header><h2 id="image-dialog-title">이미지 미리보기</h2><button type="button" class="reader-action" data-close-image>닫기</button></header>
+<dialog class="reader-image-dialog" aria-labelledby="image-title-{{ section }}-{{ page.fileSlug }}" data-image-dialog>
+  <header><h2 id="image-title-{{ section }}-{{ page.fileSlug }}">이미지 미리보기</h2><button type="button" class="reader-action" data-close-image>닫기</button></header>
   <div class="image-stage" data-image-stage></div>
   <footer><p data-image-caption></p><a class="text-link" data-image-source>원본 파일 열기</a></footer>
 </dialog>

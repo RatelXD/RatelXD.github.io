@@ -1,7 +1,7 @@
 {% from "os-icons.njk" import icon %}
 
 {% macro tile(url, name, kind, art, summary="", folder="", date="", displayDate="", image="", excerpt="", alias=false, topic="") %}
-<li class="entry-cell"{% if alias %} data-home-alias="{{ url | escape }}"{% endif %}><a href="{{ url | escape }}" class="finder-file" data-entry{% if alias %} draggable="true"{% endif %}
+<li class="entry-cell"><a href="{{ url | escape }}" class="finder-file" data-entry
     {% if folder %}data-folder="{{ folder | escape }}"{% else %}data-file{% endif %}
     data-name="{{ name | escape }}" data-kind="{{ kind | escape }}"
     data-summary="{{ summary | escape }}" data-date="{{ date | escape }}" data-date-label="{{ displayDate | escape }}"

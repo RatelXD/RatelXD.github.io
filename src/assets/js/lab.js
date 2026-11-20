@@ -86,5 +86,3 @@ function setupPacketLab(lab) {
   }));
   lab.querySelector("[data-lab-controls]").hidden = false;
 }
-
-document.querySelectorAll("[data-packet-lab]").forEach(setupPacketLab);

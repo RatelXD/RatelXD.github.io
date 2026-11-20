@@ -22,40 +22,32 @@
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Big Sur풍 바탕화면의 Finder에서 RatelXD의 프로젝트와 학습 기록을 탐색하는 화면">
   <link rel="icon" href="{{ '/assets/media/icon.png' | assetUrl }}" type="image/png">
-  {% for sheet in ["tokens", "base", "site", "menus"] %}<link rel="stylesheet" href="{{ ('/assets/css/' + sheet + '.css') | assetUrl }}">
+  {% for sheet in ["tokens", "base", "site", "menus", "finder", "desk-dialogs", "reading", "lab"] %}
+  <link rel="stylesheet" href="{{ ('/assets/css/' + sheet + '.css') | assetUrl }}">
   {% endfor %}
-  <script src="{{ '/assets/js/window.js' | assetUrl }}" defer></script>
-  <script src="{{ '/assets/js/desktop.js' | assetUrl }}" defer></script>
-  {% if home %}
-  <link rel="stylesheet" href="{{ '/assets/css/finder.css' | assetUrl }}">
-  <link rel="stylesheet" href="{{ '/assets/css/desk-dialogs.css' | assetUrl }}">
-  <script src="{{ '/assets/js/finder.js' | assetUrl }}" defer></script>
-  <script src="{{ '/assets/js/desk-dialogs.js' | assetUrl }}" defer></script>
-  {% elif lab %}
-  <link rel="stylesheet" href="{{ '/assets/css/lab.css' | assetUrl }}"><script src="{{ '/assets/js/lab.js' | assetUrl }}" defer></script>
-  {% else %}
-  <link rel="stylesheet" href="{{ '/assets/css/reading.css' | assetUrl }}"><script src="{{ '/assets/js/reading.js' | assetUrl }}" defer></script>
-  {% endif %}
+  {% for script in ["window", "finder", "reading", "lab", "desk-dialogs", "desktop"] %}
+  <script src="{{ ('/assets/js/' + script + '.js') | assetUrl }}" defer></script>
+  {% endfor %}
 </head>
-<body class="workspace {% if home %}finder-page{% else %}reader-page{% endif %}">
+<body class="workspace">
   {% include "symbols.njk" %}
   <a class="skip" href="#main">본문으로 건너뛰기</a>
   {% include "menubar.njk" %}
-  <main id="main" class="workspace-stage" tabindex="-1">
+  <main id="main" class="workspace-stage" tabindex="-1" data-routes="{% for item in collections.all %}{{ item.url }} {% endfor %}">
     <nav class="desktop-files" aria-label="데스크탑 항목">
-      <a href="/"{% if home %} data-folder="home"{% endif %}>{{ appImage("disk", 62) }}<span>RatelXD HD</span></a>
-      <a href="/projects/"{% if home %} data-folder="projects"{% endif %}>{{ appImage("folder", 62) }}<span>프로젝트</span></a>
+      <a href="/" data-folder="home">{{ appImage("disk", 62) }}<span>RatelXD HD</span></a>
+      <a href="/projects/" data-folder="projects">{{ appImage("folder", 62) }}<span>프로젝트</span></a>
     </nav>
-    <div class="os-window{% if not home %} reader-window{% endif %}" data-window>
+    <div class="os-window {{ 'finder-page' if home else 'reader-window' }}" data-window="{{ page.url }}" data-app-name="{{ appName }}" tabindex="-1" role="region" aria-label="{{ 'Finder' if home else title | escape }}">
       {% include "finder-toolbar.njk" %}
       {% if home %}{{ content | safe }}{% else %}
         <div class="reader-scroll" tabindex="0" role="region" aria-label="{{ title | escape }} 내용">{{ content | safe }}</div>
       {% endif %}
       <button type="button" class="resize-handle enhance" data-resize aria-label="창 크기 조절" title="드래그하거나 방향키로 창 크기 조절"></button>
     </div>
-    <button type="button" class="restore-window" data-restore hidden>{{ appImage("finder" if home else ("lab" if lab else ("contacts" if profile else "preview")), 37) }}{{ appName }} 열기</button>
+    <button type="button" class="restore-window" data-restore hidden>{{ appImage("finder", 37) }}<span>Finder 열기</span></button>
   </main>
   {% include "desktop-dock.njk" %}
-  {% if home %}{% include "desk-dialogs.njk" %}{% endif %}
+  {% include "desk-dialogs.njk" %}
 </body>
 </html>

@@ -1,19 +1,11 @@
-(() => {
-  const win = document.querySelector("[data-window]");
-  if (!win) return;
-  const html = document.documentElement;
-  html.classList.add("has-desk-js");
+function setupWindowGeometry(win) {
   const stage = win.parentElement;
   const bar = win.querySelector("[data-titlebar]");
-  const restore = stage.querySelector("[data-restore]");
   const zoomButton = win.querySelector('[data-win="zoom"]');
   const grip = win.querySelector("[data-resize]");
-  const isFinder = document.body.classList.contains("finder-page");
   const desktop = matchMedia("(min-width:48.01rem) and (pointer:fine)");
-  const compact = matchMedia("(max-width:48rem)");
   const offset = { x:0, y:0 };
   let gesture = null;
-  let lastFocus;
 
   function move(x, y) {
     offset.x = x;
@@ -40,40 +32,9 @@
     if (grip) grip.disabled = value;
     if (!value) keepInside();
   }
-  function show(focus = true) {
-    if (!win.hidden) return;
-    win.hidden = false;
-    restore.hidden = true;
-    keepInside();
-    if (focus) {
-      const target = lastFocus?.isConnected && lastFocus.getClientRects().length && win.contains(lastFocus)
-        ? lastFocus : win.querySelector("[data-win]");
-      target?.focus({ preventScroll:true });
-    }
-  }
   function restoreSize() {
     win.style.removeProperty("--win-width");
     win.style.removeProperty("--win-height");
-  }
-  function hide(close) {
-    if (win.hidden) return;
-    if (close && !isFinder) {
-      const link = bar.querySelector("a[data-back], a.back-folder, a[data-parent]");
-      const section = location.pathname.split("/")[1];
-      location.assign(link?.href || (["notes","activities","projects"].includes(section) ? "/?folder=" + section : "/"));
-      return;
-    }
-    if (win.contains(document.activeElement)) lastFocus = document.activeElement;
-    if (close) {
-      document.dispatchEvent(new Event("desk:reset"));
-      zoom(false);
-      restoreSize();
-      move(0, 0);
-      lastFocus = null;
-    }
-    win.hidden = true;
-    restore.hidden = false;
-    restore.focus({preventScroll:true});
   }
   function resizeFrom(rect, dx, dy) {
     const area = stage.getBoundingClientRect();
@@ -126,44 +87,31 @@
     surface.addEventListener("pointermove",moveGesture);
     surface.addEventListener("lostpointercapture",endGesture);
   }
-  bar.addEventListener("click", event => {
-    const action = event.target.closest("[data-win]")?.dataset.win;
-    if (action === "close" || action === "minimize") hide(action === "close");
-    if (action === "zoom") zoom(!win.classList.contains("is-max"));
-  });
-  restore.addEventListener("click", () => show());
-  win.addEventListener("focusin",event=>{ lastFocus = event.target; });
-  document.addEventListener("desk:show", () => show(false));
-  document.addEventListener("click", event => {
-    const launcher = event.target.closest("a[data-launch-finder], a[data-current-app]");
-    if (!launcher || (!isFinder && launcher.hasAttribute("data-launch-finder")) ||
-        event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    if (win.hidden) show();
-    else if (isFinder) document.dispatchEvent(new Event("desk:home"));
-    else win.querySelector(".reader-scroll")?.focus({preventScroll:true});
-  });
-  window.addEventListener("resize", () => {
-    if (desktop.matches) keepInside();
-    else { restoreSize(); move(0,0); }
-    const open = menus.find(menu => menu.open);
-    if (open) positionMenu(open);
-  });
+  return {
+    place(x, y) { if (desktop.matches) keepInside(x, y); },
+    zoom() { zoom(!win.classList.contains("is-max")); },
+    fit() {
+      if (desktop.matches) keepInside();
+      else { restoreSize(); move(0, 0); }
+    }
+  };
+}
 
+function setupMenuBar(workspace) {
+  const html = document.documentElement;
+  const compact = matchMedia("(max-width:48rem)");
   const menuBar = document.querySelector(".system-bar");
   const menus = [...menuBar.querySelectorAll(".mac-menu")];
   const commands = [...menuBar.querySelectorAll("[data-menu-command]")];
-  const state = { hasSelection:false, canPreview:false, canTrash:false, canBack:false, canForward:false, folder:"home", layout:"grid", sort:"name" };
-  document.addEventListener("desk:state", event => {
-    Object.assign(state,event.detail);
-    refreshCommands();
-  });
+  document.addEventListener("desk:state", refreshCommands);
+  document.addEventListener("desk:windows", refreshCommands);
   function refreshCommands() {
-    const availability = {selection:state.hasSelection, preview:state.canPreview, back:state.canBack, forward:state.canForward, parent:state.folder !== "home", window:!win.hidden};
+    const current = workspace.active;
+    const state = current?.finderState || {};
+    const availability = {selection:state.hasSelection, preview:state.canPreview, back:state.canBack, forward:state.canForward, parent:state.folder && state.folder !== "home", window:Boolean(current)};
     for (const node of commands) {
       const needs = node.dataset.menuNeeds;
-      node.disabled = needs ? !availability[needs] || win.hidden : false;
-      if (node.dataset.menuCommand === "trash") node.hidden = !state.canTrash || win.hidden;
+      node.disabled = Boolean(needs && !availability[needs]);
       if (node.dataset.menuMark) {
         node.dataset.checked = String(node.dataset.menuMark === state.layout || node.dataset.menuMark === state.sort);
         node.setAttribute("aria-pressed",node.dataset.checked);
@@ -194,6 +142,10 @@
       (choices[last ? choices.length - 1 : 0] || menu.querySelector("summary")).focus({preventScroll:true});
     }
   }
+  window.addEventListener("resize", () => {
+    const open = menus.find(menu => menu.open);
+    if (open) positionMenu(open);
+  });
   for (const menu of menus) {
     menu.addEventListener("toggle", () => {
       if (!menu.open) return;
@@ -268,22 +220,19 @@
     }
   }
   function runCommand(action) {
-    if (action === "window-close" || action === "window-minimize") hide(action === "window-close");
-    else if (action === "window-zoom") { show(false); zoom(!win.classList.contains("is-max")); }
-    else if (action === "window-show") {
-      if (win.hidden) show();
-      else (win.querySelector(".reader-scroll") || win.querySelector("[data-win]"))?.focus({preventScroll:true});
+    const current = workspace.active;
+    if (action.startsWith("window-")) {
+      if (current) workspace.control(current, action.slice(7));
     } else if (action === "spotlight") {
       const search = menuBar.querySelector(".status-search[data-spotlight]");
       search?.focus({preventScroll:true});
       search?.click();
     } else if (action === "copy-page") copyPage();
     else if (action === "reader-start" || action === "reader-end") {
-      const pane = win.querySelector(".reader-scroll");
+      const pane = current?.win.querySelector(".reader-scroll");
       if (pane) pane.scrollTop = action === "reader-start" ? 0 : pane.scrollHeight;
     } else {
-      show(false);
-      document.dispatchEvent(new CustomEvent("desk:action",{detail:{action}}));
+      current?.win.dispatchEvent(new CustomEvent("desk:action",{detail:{action}}));
     }
   }
   menuBar.addEventListener("click", event => {
@@ -303,7 +252,6 @@
       const activeMenu = menus.find(menu=>menu.open);
       closeMenus();
       activeMenu?.querySelector("summary").focus({preventScroll:true});
-      if (!isFinder) { event.preventDefault(); location.assign("/?search=1"); }
     }
   });
 
@@ -387,4 +335,5 @@
     const tip = menuBar.querySelector("[data-finder-help]");
     if (tip) tip.textContent = "폴더나 파일을 한 번 탭하면 열립니다.";
   }
-})();
+  refreshCommands();
+}
