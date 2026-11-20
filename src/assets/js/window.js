@@ -158,7 +158,7 @@ function setupMenuBar(workspace) {
     });
   }
   menuBar.addEventListener("keydown", event => {
-    if (event.defaultPrevented || event.isComposing) return;
+    if (event.defaultPrevented || event.isComposing || !event.target.closest(".mac-menu")) return;
     const menu = menus.find(other=>other.open) || event.target.closest(".mac-menu");
     if (!menu) return;
     const summary = menu.querySelector("summary");
@@ -190,8 +190,11 @@ function setupMenuBar(workspace) {
   menuBar.addEventListener("focusout", event => {
     if (event.relatedTarget && !menuBar.contains(event.relatedTarget)) closeMenus();
   });
+  menuBar.addEventListener("focusin", event => {
+    if (!event.target.closest(".mac-menu")) closeMenus();
+  });
   document.addEventListener("pointerdown", event => {
-    if (!menuBar.contains(event.target)) closeMenus();
+    if (!event.target.closest(".mac-menu")) closeMenus();
   });
 
   const announcement = menuBar.querySelector("[data-menu-message]");
@@ -289,17 +292,20 @@ function setupMenuBar(workspace) {
   });
 
   const clock = menuBar.querySelector(".system-clock");
+  const narrowClock = matchMedia("(max-width:28rem)");
   const shortTime = new Intl.DateTimeFormat("ko-KR",{hour:"numeric",minute:"2-digit"});
+  const compactTime = new Intl.DateTimeFormat("ko-KR",{hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
   const shortDate = new Intl.DateTimeFormat("ko-KR",{month:"long",day:"numeric",weekday:"short"});
   function tick() {
     const now = new Date();
     const time = shortTime.format(now);
     const date = shortDate.format(now) + " " + time;
-    clock.textContent = compact.matches ? time : date;
+    clock.textContent = narrowClock.matches ? compactTime.format(now) : (compact.matches ? time : date);
     clock.setAttribute("aria-label",date);
     clock.dateTime = now.toISOString();
   }
   tick();
+  narrowClock.addEventListener("change",tick);
   compact.addEventListener("change",tick);
   setInterval(tick,15000);
   const network = menuBar.querySelector("[data-network-state]");

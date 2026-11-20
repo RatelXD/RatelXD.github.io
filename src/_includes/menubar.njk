@@ -115,6 +115,15 @@
     </details>
   </nav>
   <div class="mac-extras">
+    <fieldset class="appearance-switch" data-appearance-switch hidden>
+      <legend class="visually-hidden">화면 모드</legend>
+      {% for value, label in [["system", "시스템 설정대로"], ["light", "화이트 모드"], ["dark", "다크 모드"]] %}
+      <label title="{{ label }}">
+        <input type="radio" name="appearance" value="{{ value }}" aria-label="{{ label }}"{% if value == "system" %} checked{% endif %}>
+        <span>{{ icon("appearance-" + value, 15) }}</span>
+      </label>
+      {% endfor %}
+    </fieldset>
     <details class="mac-menu status-menu battery-menu" data-battery-menu hidden>
       <summary aria-label="배터리 상태">{{ icon("battery",22) }}<span class="battery-fill" data-battery-fill aria-hidden="true"></span></summary>
       <div class="mac-sheet status-sheet"><strong>배터리</strong><p data-battery-status></p></div>

@@ -9,6 +9,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="dark-chrome" content="#181922" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#c62f59">
   <title>{% if home %}RatelXD의 작업실 | 클라우드 보안 포트폴리오{% else %}{{ title | escape }} | RatelXD의 작업실{% endif %}</title>
   <meta name="description" content="{{ description | default(site.description) | escape }}">
@@ -25,6 +27,8 @@
   {% for sheet in ["tokens", "base", "site", "menus", "finder", "desk-dialogs", "reading", "lab"] %}
   <link rel="stylesheet" href="{{ ('/assets/css/' + sheet + '.css') | assetUrl }}">
   {% endfor %}
+  <style id="dark-appearance" media="(prefers-color-scheme: dark)">{% include "dark.css" %}</style>
+  <script>{% include "appearance.js" %}</script>
   {% for script in ["window", "finder", "reading", "lab", "desk-dialogs", "desktop"] %}
   <script src="{{ ('/assets/js/' + script + '.js') | assetUrl }}" defer></script>
   {% endfor %}

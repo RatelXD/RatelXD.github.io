@@ -15,10 +15,23 @@
   --menu-knob: #fff;
   --menu-float: 0 16px 36px -8px rgb(19 14 29 / .38), 0 3px 11px rgb(24 19 34 / .18), inset 0 0 0 1px rgb(255 255 255 / .65);
   --menu-ring: #1562c4;
+  --appearance-track: rgb(238 239 242 / .88);
+  --appearance-edge: rgb(33 35 41 / .23);
+  --appearance-icon: #474950;
+  --appearance-selected: #fff;
+  --appearance-ink: #24252a;
 }
 .system-bar { position:relative; z-index:8; display:flex; align-items:center; justify-content:space-between; min-width:0; height:28px; padding:0 clamp(12px,1.2vw,22px); color:var(--menu-bar-ink); background:var(--menu-bar-tint); -webkit-backdrop-filter:blur(24px) saturate(1.25); backdrop-filter:blur(24px) saturate(1.25); box-shadow:inset 0 -1px var(--menu-bar-glint); font:500 .84rem/1.22 var(--font-body); letter-spacing:-.012em; user-select:none; }
 .mac-app-menus,.mac-extras { display:flex; align-items:center; height:100%; min-width:0; }
-.mac-extras { margin-left:auto; gap:2px; }
+.mac-extras { flex:none; margin-left:auto; gap:2px; }
+.appearance-switch { display:flex; flex:none; align-items:center; min-width:0; height:24px; margin:0 5px 0 0; padding:1px; border:1px solid var(--appearance-edge); border-radius:5px; background:var(--appearance-track); }
+.appearance-switch label { position:relative; display:grid; place-items:stretch; width:26px; height:24px; cursor:pointer; }
+.appearance-switch input { position:absolute; z-index:1; inset:0; width:100%; height:100%; opacity:0; margin:0; cursor:inherit; }
+.appearance-switch label > span { display:grid; place-items:center; margin:2px 0; border-radius:3px; color:var(--appearance-icon); }
+.appearance-switch label:hover > span { color:var(--appearance-ink); }
+.appearance-switch input:checked + span { color:var(--appearance-ink); background:var(--appearance-selected); box-shadow:inset 0 0 0 1px var(--appearance-edge),0 1px 2px rgb(0 0 0 / .12); }
+.appearance-switch input:focus-visible + span { outline:2px solid var(--menu-ring); outline-offset:-2px; }
+.appearance-switch .glyph { stroke-width:1.75; }
 .system-bar .mac-menu { position:relative; flex:none; }
 .system-bar summary,.system-bar .status-search { box-sizing:border-box; display:flex; justify-content:center; align-items:center; gap:4px; height:26px; min-width:29px; margin:0; padding:0 8px; color:var(--menu-bar-ink); border:0; border-radius:4px; font:inherit; line-height:1; list-style:none; text-shadow:var(--menu-text-shadow); background:transparent; cursor:default; white-space:nowrap; }
 .system-bar summary::-webkit-details-marker { display:none; }
@@ -66,17 +79,35 @@ html.desk-reduce-motion *,html.desk-reduce-motion *::before,html.desk-reduce-mot
 @media (max-width:48rem) {
   .system-bar { height:37px; padding-inline:6px; }
   .system-bar summary,.system-bar .status-search { min-width:34px; height:35px; padding-inline:6px; }
+  .system-bar .front-menu { flex:0 1 auto; min-width:0; }
+  .system-bar .front-menu > summary { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; line-height:35px; }
   .system-bar .mac-sheet { top:calc(100% + 2px); }
   .system-bar .mac-item { min-height:36px; }
   .mac-menu.full-menu,.mac-menu.wifi-menu,.mac-menu.battery-menu { display:none; }
   .mac-extras { gap:0; }
+  .appearance-switch { height:29px; }
+  .appearance-switch label { width:29px; height:35px; }
+  .appearance-switch label > span { margin-block:5px; }
   .system-bar .system-clock { padding-inline:3px 2px; font-size:.78rem; }
   .mac-extras .status-menu > summary { min-width:32px; }
 }
-@media (max-width:24rem) {
+@media (max-width:28rem) {
   .system-bar .view-menu { display:none; }
+  .appearance-switch { margin-right:2px; }
+  .appearance-switch label { width:26px; }
+}
+@media (max-width:25rem) {
+  .system-bar { padding-inline:3px; }
+  .system-bar summary,.system-bar .status-search { min-width:26px; padding-inline:3px; }
+  .mac-extras .status-menu > summary,.system-bar .apple-menu > summary { min-width:26px; padding-inline:3px; }
+}
+@media (max-width:22rem) {
+  .appearance-switch label { width:24px; }
 }
 @media (forced-colors:active) {
+  .appearance-switch { border-color:ButtonText; }
+  .appearance-switch input:checked + span { outline:1px solid Highlight; }
+  .appearance-switch input:focus-visible + span { outline:2px dashed Highlight; }
   .system-bar .mac-sheet { border:1px solid CanvasText; }
   .control-group input { appearance:auto; }
   .control-group input::before { display:none; }

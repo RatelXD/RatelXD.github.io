@@ -1,6 +1,8 @@
-WhiteSur (morning) by Vince
+WhiteSur and WhiteSur (morning) by Vince
 Original Inkscape artwork: https://github.com/vinceliuice/WhiteSur-wallpapers/blob/5c1d7ca20b8de0a7efe443792c19e49277262e02/src/WhiteSur-morning.svg
 Full-size rendering: https://github.com/vinceliuice/WhiteSur-wallpapers/blob/5c1d7ca20b8de0a7efe443792c19e49277262e02/4k/WhiteSur-morning.jpg
+Artwork used in dark mode: https://github.com/vinceliuice/WhiteSur-wallpapers/blob/5c1d7ca20b8de0a7efe443792c19e49277262e02/src/WhiteSur.svg
+sur-dark.webp is a resized WebP version of https://github.com/vinceliuice/WhiteSur-wallpapers/blob/5c1d7ca20b8de0a7efe443792c19e49277262e02/4k/WhiteSur.jpg
 Upstream license: https://github.com/vinceliuice/WhiteSur-wallpapers/blob/5c1d7ca20b8de0a7efe443792c19e49277262e02/LICENSE
 
 sur-day.webp and sur-portrait.webp are cropped and resized WebP versions of the original artwork. The social preview also displays the desktop version.

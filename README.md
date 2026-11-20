@@ -64,6 +64,6 @@ npm run dev
 
 ## 바탕화면과 서체
 
-바탕화면은 Vince의 WhiteSur (morning)입니다. Finder와 Dock용 그림은 WhiteSur 아이콘 테마와 직접 그린 아이콘을 사용합니다. 재배포 라이선스와 원본은 `src/assets/licenses/`에 있습니다. [배경 원본](https://github.com/vinceliuice/WhiteSur-wallpapers) · [아이콘 원본](https://github.com/vinceliuice/WhiteSur-icon-theme)
+화면 모드는 기본으로 기기 설정을 따릅니다. 상단 바에서 화이트 모드나 다크 모드를 고르면 다음 방문에도 그 설정이 적용됩니다. 바탕화면은 Vince의 WhiteSur 시리즈에서 가져왔습니다. Finder와 Dock용 그림은 WhiteSur 아이콘 테마와 직접 그린 아이콘을 사용합니다. 재배포 라이선스와 원본은 `src/assets/licenses/`에 있습니다. [배경 원본](https://github.com/vinceliuice/WhiteSur-wallpapers) · [아이콘 원본](https://github.com/vinceliuice/WhiteSur-icon-theme)
 
 Mac에서는 시스템 서체를 우선 사용합니다. 다른 환경에서 한글을 표시하는 Pretendard는 자체 호스팅합니다. 서체 라이선스는 `src/assets/fonts/`에 있습니다.

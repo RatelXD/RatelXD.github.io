@@ -1,0 +1,113 @@
+:root {
+  color-scheme: dark;
+  --color-paper: #222326;
+  --color-paper-2: #292a2e;
+  --color-paper-3: #34353b;
+  --color-ink: #f2f1f4;
+  --color-ink-2: #d7d6dd;
+  --color-muted: #b0afb9;
+  --color-rule: #3b3c42;
+  --color-rule-2: #5d5e68;
+  --color-accent: #86baff;
+  --color-accent-ink: #101b2b;
+  --color-focus: #91c5ff;
+  --color-desktop: #181922;
+  --panel-title: #2c2d31;
+  --selected: #41434c;
+  --hover: #323e50;
+  --float-shadow: 0 22px 64px -14px rgb(0 0 0 / .66), 0 6px 18px rgb(0 0 0 / .34), 0 0 0 1px rgb(255 255 255 / .18);
+
+  --mac-material: rgb(39 39 46 / .87);
+  --mac-toolbar: #303136;
+  --mac-button-ink: #c9c8cf;
+  --mac-tool-hover: rgb(255 255 255 / .08);
+  --mac-tool-down: rgb(255 255 255 / .15);
+  --mac-divider: rgb(255 255 255 / .12);
+  --mac-glass: rgb(40 41 49 / .68);
+  --mac-rim: rgb(255 255 255 / .25);
+  --mac-dot: #e5e5eb;
+  --mac-menu: rgb(48 48 54 / .97);
+  --mac-menu-shadow: 0 8px 24px rgb(0 0 0 / .45), 0 0 0 1px rgb(255 255 255 / .17);
+  --mac-sheet-hover: #285fa9;
+  --mac-tooltip: #34353b;
+  --mac-modal-scrim: rgb(0 0 0 / .4);
+
+  --menu-bar-tint: rgb(18 18 25 / .63);
+  --menu-bar-glint: rgb(255 255 255 / .1);
+  --menu-panel: var(--mac-menu);
+  --menu-ink: var(--color-ink);
+  --menu-muted: var(--color-muted);
+  --menu-disabled: #93939c;
+  --menu-separator: var(--mac-divider);
+  --menu-tint: var(--mac-sheet-hover);
+  --menu-track: #62636b;
+  --menu-float: var(--mac-menu-shadow);
+  --menu-ring: var(--color-focus);
+  --appearance-track: rgb(25 25 29 / .94);
+  --appearance-edge: rgb(255 255 255 / .21);
+  --appearance-icon: #b6b6bd;
+  --appearance-selected: #393a40;
+  --appearance-ink: #f5f5f7;
+
+  --f-ink: var(--color-ink);
+  --f-muted: var(--color-muted);
+  --f-quiet: #a4a4ae;
+  --f-canvas: var(--color-paper);
+  --f-rule: var(--color-rule);
+  --f-line: #45464e;
+  --f-zebra: var(--color-paper-2);
+  --f-sidebar: rgb(49 49 56 / .66);
+  --f-side-selection: rgb(205 209 226 / .18);
+  --f-side-hover: rgb(205 209 226 / .09);
+  --f-blue: var(--color-accent);
+  --f-active: var(--mac-sheet-hover);
+  --f-selection: rgb(209 212 230 / .15);
+  --f-list-selected: var(--mac-sheet-hover);
+  --f-paper: #303137;
+  --f-shadow: rgb(0 0 0 / .38);
+
+  --desk-ink: var(--color-ink);
+  --desk-secondary: var(--color-muted);
+  --desk-blue: var(--mac-sheet-hover);
+  --desk-focus: var(--color-focus);
+  --desk-search-glass: rgb(42 42 48 / .95);
+  --desk-title-glass: rgb(52 52 59 / .97);
+  --desk-paper-stage: #191a1d;
+  --desk-rule: var(--mac-divider);
+  --desk-ring: rgb(255 255 255 / .25);
+  --desk-tool-hover: var(--mac-tool-hover);
+  --desk-search-scrim: rgb(0 0 0 / .16);
+  --desk-preview-scrim: var(--mac-modal-scrim);
+  --reader-matte: #191a1d;
+  --reader-photo-matte: #141518;
+  --reader-page-edge: rgb(255 255 255 / .13);
+}
+
+.workspace::before { background-image: url("{{ '/assets/media/sur-dark.webp' | assetUrl }}"); background-position: 55% center; }
+@media (max-width: 42rem) {
+  .workspace::before { background-position: 66% center; }
+}
+
+/* The miniature document artwork and raster subnet diagram have their own paper. */
+.file-paper {
+  --f-paper: #eaeaf0;
+  --f-ink: #27272c;
+  --f-rule: #dbdbe0;
+  --f-line: #9899a0;
+  --f-quiet: #71727a;
+  --f-canvas: #fafafa;
+}
+.address-plate .endpoint { color: #252426; }
+.prose pre { background: #151619; color: var(--reader-text); }
+.skip, .skip:focus-visible { color: var(--color-paper); }
+
+.packet-lab {
+  --lab-ink: #e7f1f3;
+  --lab-secondary: #aec3ca;
+  --lab-teal: #76d9c3;
+  --lab-line: #48555c;
+  --lab-paper: #292d31;
+  --lab-mint: #233d39;
+  --lab-error: #ffa9a7;
+  --lab-graph: #142a34;
+}

@@ -86,7 +86,7 @@
   border: 0;
   outline: 0;
   color: var(--desk-ink);
-  caret-color: var(--desk-blue);
+  caret-color: var(--desk-focus);
   background: transparent;
   font: 400 1.62rem/1.25 var(--desk-type);
   letter-spacing: -.025em;
@@ -160,10 +160,10 @@
   white-space: nowrap;
 }
 #desk-look-title:focus { outline: none; }
-.desk-open-file { display: inline-flex; align-items: center; justify-content: center; justify-self: end; min-height: 27px; padding: .12rem .58rem; border: 1px solid var(--desk-rule); border-radius: 5px; background: var(--desk-white); color: var(--desk-ink); text-decoration: none; white-space: nowrap; font-size: .79rem; box-shadow: 0 1px 1px var(--desk-rule); }
+.desk-open-file { display: inline-flex; align-items: center; justify-content: center; justify-self: end; min-height: 27px; padding: .12rem .58rem; border: 1px solid var(--desk-rule); border-radius: 5px; background: var(--color-paper); color: var(--desk-ink); text-decoration: none; white-space: nowrap; font-size: .79rem; box-shadow: 0 1px 1px var(--desk-rule); }
 .desk-open-file:hover,.desk-open-file:active { color: var(--desk-ink); text-decoration: none; background: var(--desk-paper-stage); }
 .desk-look-body { display: grid; align-items: start; flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: clamp(.7rem,2.3dvh,1.55rem) clamp(.7rem,2.3vw,2rem); }
-.desk-look-paper { width: 100%; max-width: 41rem; margin: 0 auto; padding: clamp(1.15rem,3.4vw,2.7rem); background: var(--desk-white); box-shadow: var(--desk-page-shadow); }
+.desk-look-paper { width: 100%; max-width: 41rem; margin: 0 auto; padding: clamp(1.15rem,3.4vw,2.7rem); background: var(--color-paper); box-shadow: var(--desk-page-shadow); }
 .desk-look-paper h3 { margin: 0; font: 650 clamp(1.32rem,2.2vw,1.75rem)/1.32 var(--desk-type); letter-spacing: -.035em; }
 .desk-look-summary { margin: .55rem 0 0; color: var(--desk-secondary); font-size: .99rem; line-height: 1.58; }
 .desk-look-excerpt { margin: 1.05rem 0 0; color: var(--desk-ink); font-size: 1rem; line-height: 1.72; }
